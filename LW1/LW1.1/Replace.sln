@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW1.1", "LW1.1\LW1.1.vcxproj", "{53BE0CDF-16E1-45AB-95D2-796AD5F70949}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Replace", "LW1.1\LW1.1.vcxproj", "{53BE0CDF-16E1-45AB-95D2-796AD5F70949}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{376EE013-74BA-4231-B552-1C1CB5976B34}"
+	ProjectSection(SolutionItems) = preProject
+		.clang-format = .clang-format
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

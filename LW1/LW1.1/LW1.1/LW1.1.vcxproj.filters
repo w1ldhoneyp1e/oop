@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LW1.1.cpp">
+    <ClCompile Include="Replace.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
