@@ -31,8 +31,10 @@ if ERRORLEVEL 1 goto err
 echo Test 4 passed
 
 rem Test 5: Проверка на пустой поиск
-%PROGRAM% test-data\empty-search.txt "%TEMP%\empty-search.txt"
-if not ERRORLEVEL 1 goto err
+%PROGRAM% test-data\empty-search.txt "%TEMP%\empty-search.txt" "" some
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\empty-search.txt" test-data\empty-search.txt >nul
+if ERRORLEVEL 1 goto err
 echo Test 5 passed
 
 rem Test 6: Проверка на замену символа
@@ -41,6 +43,25 @@ if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\result-for-hard-test.txt" test-data\result-for-hard-test.txt >nul
 if ERRORLEVEL 1 goto err
 echo Test 6 passed
+
+rem Test 7: Проверка на несуществующий файл
+%PROGRAM% test-data\not-existing-file.txt "%TEMP%\not-existing-file.txt" some some
+if not ERRORLEVEL 1 goto err
+echo Test 7 passed
+
+rem Test 8: Проверка на пустой заменяющий текст
+%PROGRAM% test-data\empty-replace-text.txt "%TEMP%\empty-replace-text.txt" some ""
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\empty-replace-text.txt" test-data\result-for-empty-replace-text.txt >nul
+if ERRORLEVEL 1 goto err
+echo Test 8 passed
+
+rem Test 9: Проверка на маму
+%PROGRAM% test-data\mama.txt "%TEMP%\mama.txt" ma mama
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\mama.txt" test-data\check-mama.txt >nul
+if ERRORLEVEL 1 goto err
+echo Test 9 passed
 
 echo OK
 exit 0
