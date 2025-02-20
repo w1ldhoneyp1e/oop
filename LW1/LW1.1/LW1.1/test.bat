@@ -63,6 +63,11 @@ fc.exe "%TEMP%\mama.txt" test-data\check-mama.txt >nul
 if ERRORLEVEL 1 goto err
 echo Test 9 passed
 
+rem Test 10: Проверка на -h
+%PROGRAM% -h
+if ERRORLEVEL 1 goto err
+echo Test 10 passed
+
 echo OK
 exit 0
 

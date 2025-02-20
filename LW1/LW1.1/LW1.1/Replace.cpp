@@ -10,6 +10,11 @@ int ExitWithError(int code = 1)
 	return code;
 }
 
+void PrintUsage()
+{
+	std::cout << "Usage: replace <input file> <output file> <search string> <replacement string>\n";
+}
+
 std::string ReplaceString(
 	const std::string& subject,
 	const std::string& searchString,
@@ -111,6 +116,11 @@ int main(int argc, char* argv[])
 	{
 		return HandleConsoleInput();
 	}
+	else if (argc == 2 && std::string(argv[1]) == "-h")
+	{
+        PrintUsage();
+        return EXIT_SUCCESS;
+    }
 	else if (argc != 5)
 	{
 		return ExitWithError();
