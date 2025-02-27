@@ -7,14 +7,10 @@
 
 const int MATRIX_SIZE = 3;
 
-using Matrix = std::array<std::array<double, MATRIX_SIZE>, MATRIX_SIZE>;
+const std::string INVALID_MATRIX_FORMAT = "Invalid matrix format";
+const std::string INVALID_MATRIX = "Invalid matrix";
 
-enum class MatrixReadResult
-{
-	Succes,
-	InvalidError,
-	InvalidFormatError,
-};
+using Matrix = std::array<std::array<double, MATRIX_SIZE>, MATRIX_SIZE>;
 
 int ExitWithError(int code = 1)
 {
@@ -83,25 +79,26 @@ bool InvertMatrix(const Matrix& input, Matrix& output) // Выделил из In
     return true;
 }
 
-MatrixReadResult ReadMatrix(std::istream& input, Matrix& matrix)
+Matrix ReadMatrix(std::istream& input)
 {
+    Matrix matrix;
     for (size_t i = 0; i < MATRIX_SIZE; i++)
     {
         for (size_t j = 0; j < MATRIX_SIZE; j++)
         {
             if (!(input >> matrix[i][j])) {
-                return input.eof() 
-                    ? MatrixReadResult::InvalidFormatError 
-                    : MatrixReadResult::InvalidError; // exception
+                throw input.eof() 
+                    ? INVALID_MATRIX_FORMAT
+                    : INVALID_MATRIX;
             }
         }
     }
     
     double extra;
     if (input >> extra)
-        return MatrixReadResult::InvalidFormatError;
+        throw INVALID_MATRIX_FORMAT;
         
-    return MatrixReadResult::Succes;
+    return matrix;
 }
 
 void PrintMatrix(const Matrix& matrix)
@@ -133,32 +130,26 @@ int main(int argc, char* argv[])
     }
 
     Matrix inputMatrix;
-    MatrixReadResult readResult;
-
-    if (argc == 2)
+    try
     {
-        std::ifstream inputFile(argv[1]);
-        if (!inputFile.is_open())
+        if (argc == 2)
         {
-            return ExitWithError();
+            std::ifstream inputFile(argv[1]);
+            if (!inputFile.is_open())
+            {
+                return ExitWithError();
+            }
+            inputMatrix = ReadMatrix(inputFile);
         }
-        readResult = ReadMatrix(inputFile, inputMatrix);
+        else
+        {
+            inputMatrix = ReadMatrix(std::cin);
+        }
     }
-    else
+    catch (const std::string& error)
     {
-        readResult = ReadMatrix(std::cin, inputMatrix);
-    }
-
-    switch (readResult)
-    {
-    case MatrixReadResult::InvalidError:
-        std::cout << "Invalid matrix" << std::endl;
+        std::cout << error << std::endl;
         return EXIT_SUCCESS;
-    case MatrixReadResult::InvalidFormatError:
-        std::cout << "Invalid matrix format" << std::endl;
-        return EXIT_SUCCESS;
-    case MatrixReadResult::Succes:
-        break;
     }
 
     Matrix outputMatrix;
