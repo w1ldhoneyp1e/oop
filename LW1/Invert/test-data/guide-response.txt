@@ -1,0 +1,9 @@
+Usage:
+  invert.exe [input file]
+  invert.exe -h
+
+Parameters:
+  input file    - file with 3x3 matrix
+  -h              - show this help
+
+If file is not specified, matrix is read from stdin
