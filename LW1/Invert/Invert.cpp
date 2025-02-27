@@ -4,19 +4,16 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <exception>
 
 const int MATRIX_SIZE = 3;
 
 const std::string INVALID_MATRIX_FORMAT = "Invalid matrix format";
 const std::string INVALID_MATRIX = "Invalid matrix";
+const std::string ERROR = "ERROR";
+const std::string NON_INVERTIBLE_MATRIX = "Non-invertible matrix";
 
 using Matrix = std::array<std::array<double, MATRIX_SIZE>, MATRIX_SIZE>;
-
-int ExitWithError(int code = 1)
-{
-	std::cout << "ERROR\n";
-	return code;
-}
 
 void PrintUsage()
 {
@@ -68,17 +65,6 @@ void CalculateAdjugateMatrix(const Matrix& input, Matrix& output, double det)
     }
 }
 
-bool InvertMatrix(const Matrix& input, Matrix& output) // Выделил из InvertMatrix - CalculateAdjugateMatrix
-{
-    double det = CalculateDeterminant(input);
-    
-    if (det == 0)
-        return false;
-
-    CalculateAdjugateMatrix(input, output, det);
-    return true;
-}
-
 Matrix ReadMatrix(std::istream& input)
 {
     Matrix matrix;
@@ -87,18 +73,30 @@ Matrix ReadMatrix(std::istream& input)
         for (size_t j = 0; j < MATRIX_SIZE; j++)
         {
             if (!(input >> matrix[i][j])) {
-                throw input.eof() 
-                    ? INVALID_MATRIX_FORMAT
-                    : INVALID_MATRIX;
+                throw std::runtime_error(input.eof() 
+                    ? INVALID_MATRIX_FORMAT 
+                    : INVALID_MATRIX);
             }
         }
     }
     
     double extra;
     if (input >> extra)
-        throw INVALID_MATRIX_FORMAT;
+        throw std::runtime_error(INVALID_MATRIX_FORMAT);
         
     return matrix;
+}
+
+Matrix InvertMatrix(const Matrix& input)
+{
+    Matrix output;
+    double det = CalculateDeterminant(input);
+    
+    if (det == 0)
+        throw std::runtime_error(NON_INVERTIBLE_MATRIX);
+
+    CalculateAdjugateMatrix(input, output, det);
+    return output;
 }
 
 void PrintMatrix(const Matrix& matrix)
@@ -120,7 +118,7 @@ int main(int argc, char* argv[])
     if (argc > 2)
     {
         PrintUsage();
-        return ExitWithError();
+        throw std::runtime_error(ERROR);
     }
 
     if (argc == 2 && std::string(argv[1]) == "-h")
@@ -129,15 +127,15 @@ int main(int argc, char* argv[])
         return EXIT_SUCCESS;
     }
 
-    Matrix inputMatrix;
-    try
+    try 
     {
+        Matrix inputMatrix;
         if (argc == 2)
         {
             std::ifstream inputFile(argv[1]);
             if (!inputFile.is_open())
             {
-                return ExitWithError();
+                throw std::runtime_error(ERROR);
             }
             inputMatrix = ReadMatrix(inputFile);
         }
@@ -145,21 +143,15 @@ int main(int argc, char* argv[])
         {
             inputMatrix = ReadMatrix(std::cin);
         }
+
+        Matrix outputMatrix = InvertMatrix(inputMatrix);
+        PrintMatrix(outputMatrix);
     }
-    catch (const std::string& error)
+    catch (const std::exception& error)
     {
-        std::cout << error << std::endl;
+        std::cout << error.what() << std::endl;
         return EXIT_SUCCESS;
     }
 
-    Matrix outputMatrix;
-    
-    if (!InvertMatrix(inputMatrix, outputMatrix))
-    {
-        std::cout << "Non-invertible" << std::endl;
-        return EXIT_SUCCESS;
-    }
-
-    PrintMatrix(outputMatrix);
     return EXIT_SUCCESS;
 }
