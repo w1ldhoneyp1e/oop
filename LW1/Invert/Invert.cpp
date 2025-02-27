@@ -60,13 +60,8 @@ double CalculateDeterminant(const Matrix& matrix)
     return det;
 }
 
-bool InvertMatrix(const Matrix& input, Matrix& output)
+void CalculateAdjugateMatrix(const Matrix& input, Matrix& output, double det)
 {
-    double det = CalculateDeterminant(input);
-    
-    if (det == 0)
-        return false;
-
     for (size_t i = 0; i < MATRIX_SIZE; i++)
     {
         for (size_t j = 0; j < MATRIX_SIZE; j++)
@@ -75,6 +70,16 @@ bool InvertMatrix(const Matrix& input, Matrix& output)
             output[j][i] = ((i + j) % 2 == 0 || minor == 0 ? 1 : -1) * minor / det;
         }
     }
+}
+
+bool InvertMatrix(const Matrix& input, Matrix& output) // Выделил из InvertMatrix - CalculateAdjugateMatrix
+{
+    double det = CalculateDeterminant(input);
+    
+    if (det == 0)
+        return false;
+
+    CalculateAdjugateMatrix(input, output, det);
     return true;
 }
 
@@ -87,7 +92,7 @@ MatrixReadResult ReadMatrix(std::istream& input, Matrix& matrix)
             if (!(input >> matrix[i][j])) {
                 return input.eof() 
                     ? MatrixReadResult::InvalidFormatError 
-                    : MatrixReadResult::InvalidError;
+                    : MatrixReadResult::InvalidError; // exception
             }
         }
     }
