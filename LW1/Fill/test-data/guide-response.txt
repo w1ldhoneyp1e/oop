@@ -1,0 +1,5 @@
+Usage:
+  fill.exe <input file> <output file>
+  fill.exe -h
+
+If no arguments provided, reads from stdin
