@@ -1,6 +1,4 @@
 @echo off
-rem %1 - значение первого аргумента командной строки bat-файла (какой он есть)
-rem %~1 - значение первого аргумента командной строки bat-файла с удалением обрамляющих кавычек (если они были)
 
 rem Переменная PROGRAM будет хранить первый аргумент командной строки заключённый в кавычки
 set PROGRAM="%~1"
@@ -9,14 +7,14 @@ rem При запуске без параметров проверяем вво�
 %PROGRAM% > nul
 if ERRORLEVEL 1 goto input
 
-rem Test 1: Проверка на замену символа
+rem Test 1: Проверка без замены
 %PROGRAM% test-data\fox.txt "%TEMP%\bird-cat.txt" bird cat
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\bird-cat.txt" test-data\fox.txt >nul
 if ERRORLEVEL 1 goto err
 echo Test 1 passed
 
-rem Test 3: Проверка на замену символа
+rem Test 3: Проверка на замену слова
 %PROGRAM% test-data\fox.txt "%TEMP%\dog-cat.txt" dog cat
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\dog-cat.txt" test-data\fox-replace-dog-with-cat.txt >nul
@@ -37,7 +35,7 @@ fc.exe "%TEMP%\empty-search.txt" test-data\empty-search.txt >nul
 if ERRORLEVEL 1 goto err
 echo Test 5 passed
 
-rem Test 6: Проверка на замену символа
+rem Test 6: Проверка на замену слова
 %PROGRAM% test-data\hard-test.txt "%TEMP%\result-for-hard-test.txt" 1231234 some
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\result-for-hard-test.txt" test-data\result-for-hard-test.txt >nul
@@ -56,7 +54,7 @@ fc.exe "%TEMP%\empty-replace-text.txt" test-data\result-for-empty-replace-text.t
 if ERRORLEVEL 1 goto err
 echo Test 8 passed
 
-rem Test 9: Проверка на маму
+rem Test 9: Проверка на заменую включающую поиск
 %PROGRAM% test-data\mama.txt "%TEMP%\mama.txt" ma mama
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\mama.txt" test-data\check-mama.txt >nul
