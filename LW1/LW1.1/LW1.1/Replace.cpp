@@ -44,18 +44,22 @@ std::string ReplaceString(
 	return result;
 }
 
-void CopyStreamWithReplacement(
-	std::istream& input, 
+bool CopyStreamWithReplacement(
+	std::istream& input,
 	std::ostream& output,
-	const std::string& searchString, 
+	const std::string& searchString,
 	const std::string& replacementString)
 {
+	bool isNotEmpty = false;
 	std::string line;
 
 	while (std::getline(input, line))
 	{
 		output << ReplaceString(line, searchString, replacementString) << "\n";
+		isNotEmpty = true;
 	}
+
+	return isNotEmpty;
 }
 
 int CopyFileWithReplacement(
@@ -91,22 +95,11 @@ int HandleConsoleInput()
 		return ExitWithError(EXIT_SUCCESS);
 	}
 
-	std::vector<std::string> text;
-	std::string line;
-	while (std::getline(std::cin, line))
-	{
-		text.push_back(line);
-	}
-
-	if (text.empty())
+	if (!CopyStreamWithReplacement(std::cin, std::cout, search, replace))
 	{
 		return ExitWithError(EXIT_SUCCESS);
 	}
 
-	for (auto& line : text)
-	{
-		std::cout << ReplaceString(line, search, replace) << std::endl;
-	}
 	return EXIT_SUCCESS;
 }
 
@@ -116,12 +109,14 @@ int main(int argc, char* argv[])
 	{
 		return HandleConsoleInput();
 	}
-	else if (argc == 2 && std::string(argv[1]) == "-h")
+
+	if (argc == 2 && std::string(argv[1]) == "-h")
 	{
-        PrintUsage();
-        return EXIT_SUCCESS;
-    }
-	else if (argc != 5)
+		PrintUsage();
+		return EXIT_SUCCESS;
+	}
+
+	if (argc != 5)
 	{
 		return ExitWithError();
 	}
