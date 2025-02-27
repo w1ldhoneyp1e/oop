@@ -132,6 +132,9 @@
   <ItemGroup>
     <ClCompile Include="Radix.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="test-data\test8.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

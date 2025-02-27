@@ -8,21 +8,30 @@ const int MAX_RADIX = 36;
 const int MIN_RADIX = 2;
 const int DECIMAL_RADIX = 10;
 
+bool isRadixValid(int radix)
+{
+	if (radix >= MIN_RADIX && radix <= MAX_RADIX)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 int CharToDigit(char c, bool& wasError)
 {
 	if (c >= '0' && c <= '9')
 	{
 		return c - '0';
 	}
-	else if (c >= 'A' && c <= 'Z')
+
+	if (c >= 'A' && c <= 'Z')
 	{
 		return c - 'A' + DECIMAL_RADIX;
 	}
-	else
-	{
-		wasError = true;
-		return 0;
-	}
+
+	wasError = true;
+	return 0;
 }
 
 char DigitToChar(int remainder, bool& wasError)
@@ -31,15 +40,13 @@ char DigitToChar(int remainder, bool& wasError)
 	{
 		return '0' + remainder;
 	}
-	else
-	{
-		return 'A' + (remainder - DECIMAL_RADIX);
-	}
+
+	return 'A' + (remainder - DECIMAL_RADIX);
 }
 
 int StringToInt(const std::string& str, int radix, bool& wasError)
 {
-	if (radix < MIN_RADIX || radix > MAX_RADIX)
+	if (isRadixValid(radix))
 	{
 		wasError = true;
 		return 0;
@@ -66,18 +73,24 @@ int StringToInt(const std::string& str, int radix, bool& wasError)
 			return 0;
 		}
 
-		if (result > (INT_MAX - digit) / radix)
+		if (isNegative && result < (INT_MIN + digit) / radix)
 		{
 			wasError = true;
 			return 0;
 		}
 
-		result = result * radix + digit;
-	}
+		if (!isNegative && result > (INT_MAX - digit) / radix)
+		{
+			wasError = true;
+			return 0;
+		}
 
-	if (isNegative)
-	{
-		result = -result;
+		if (isNegative)
+		{
+			result = result * radix - digit;
+		} else {
+			result = result * radix + digit;
+		}
 	}
 
 	return result;
@@ -85,7 +98,7 @@ int StringToInt(const std::string& str, int radix, bool& wasError)
 
 std::string IntToString(int n, int radix, bool& wasError)
 {
-	if (radix < MIN_RADIX || radix > MAX_RADIX)
+	if (isRadixValid(radix))
 	{
 		wasError = true;
 		return "";
@@ -97,12 +110,13 @@ std::string IntToString(int n, int radix, bool& wasError)
 	}
 
 	bool isNegative = (n < 0);
-	int number = n < 0 ? -n : n;
+	
+	int number = isNegative ? -n : n;
 	std::string result;
 
 	while (number != 0)
 	{
-		char ch = DigitToChar(number % radix, wasError);
+		char ch = DigitToChar(std::abs(number % radix), wasError);
 
 		result += ch;
 		number /= radix;
