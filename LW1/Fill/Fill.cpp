@@ -34,7 +34,7 @@ bool IsValidPoint(const std::vector<std::string>& image, const Point& point)
            image[point.row][point.col] != FILL_CHAR;
 }
 
-void FloodFill(std::vector<std::string>& image, const Point& start)
+void WaveFill(std::vector<std::string>& image, const Point& start)
 {
     if (!IsValidPoint(image, start))
     {
@@ -105,7 +105,7 @@ void ProcessImage(std::vector<std::string>& image)
         {
             if (image[i][j] == START_CHAR)
             {
-                FloodFill(image, Point(i, j));
+                WaveFill(image, Point(i, j));
             }
         }
     }
