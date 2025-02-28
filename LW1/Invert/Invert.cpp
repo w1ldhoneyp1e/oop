@@ -73,7 +73,7 @@ Matrix ReadMatrix(std::istream& input)
         for (size_t j = 0; j < MATRIX_SIZE; j++)
         {
             if (!(input >> matrix[i][j])) {
-                throw std::runtime_error(input.eof() 
+                throw std::invalid_argument(input.eof() 
                     ? INVALID_MATRIX_FORMAT 
                     : INVALID_MATRIX);
             }
@@ -82,7 +82,7 @@ Matrix ReadMatrix(std::istream& input)
     
     double extra;
     if (input >> extra)
-        throw std::runtime_error(INVALID_MATRIX_FORMAT);
+        throw std::invalid_argument(INVALID_MATRIX_FORMAT);
         
     return matrix;
 }
@@ -93,7 +93,7 @@ Matrix InvertMatrix(const Matrix& input)
     double det = CalculateDeterminant(input);
     
     if (det == 0)
-        throw std::runtime_error(NON_INVERTIBLE_MATRIX);
+        throw std::invalid_argument(NON_INVERTIBLE_MATRIX);
 
     CalculateAdjugateMatrix(input, output, det);
     return output;
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
     if (argc > 2)
     {
         PrintUsage();
-        throw std::runtime_error(ERROR);
+        throw std::invalid_argument(ERROR);
     }
 
     if (argc == 2 && std::string(argv[1]) == "-h")
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
             std::ifstream inputFile(argv[1]);
             if (!inputFile.is_open())
             {
-                throw std::runtime_error(ERROR);
+                throw std::invalid_argument(ERROR);
             }
             inputMatrix = ReadMatrix(inputFile);
         }
