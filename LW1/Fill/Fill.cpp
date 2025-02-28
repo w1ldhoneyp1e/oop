@@ -9,6 +9,9 @@ const char FILL_CHAR = '.';
 const char START_CHAR = 'O';
 const char WALL_CHAR = '#';
 const char EMPTY_CHAR = ' ';
+const std::string ERROR = "ERROR";
+
+using Image = std::vector<std::string>;
 
 struct Point
 {
@@ -26,7 +29,7 @@ void PrintUsage()
     std::cout << "If no arguments provided, reads from stdin" << std::endl;
 }
 
-bool IsValidPoint(const std::vector<std::string>& image, const Point& point)
+bool IsValidPoint(const Image& image, const Point& point)
 {
     return point.row >= 0 && point.row < image.size() &&
            point.col >= 0 && point.col < image[0].size() &&
@@ -66,9 +69,9 @@ void WaveFill(std::vector<std::string>& image, const Point& start)
     }
 }
 
-std::vector<std::string> ReadImage(std::istream& input, bool& wasError)
+Image ReadImage(std::istream& input)
 {
-    std::vector<std::string> image;
+    Image image;
     std::string line;
 
     while (std::getline(input, line) && image.size() < MAX_SIZE)
@@ -80,8 +83,7 @@ std::vector<std::string> ReadImage(std::istream& input, bool& wasError)
         {
             if (c != WALL_CHAR && c != START_CHAR && c != EMPTY_CHAR)
             {
-                wasError = true;
-                return std::vector<std::string>();
+                throw std::invalid_argument(ERROR);
             }
         }
         
@@ -97,7 +99,7 @@ std::vector<std::string> ReadImage(std::istream& input, bool& wasError)
     return image;
 }
 
-void ProcessImage(std::vector<std::string>& image)
+void ProcessImage(Image& image)
 {
     for (size_t i = 0; i < image.size(); ++i)
     {
@@ -111,7 +113,7 @@ void ProcessImage(std::vector<std::string>& image)
     }
 }
 
-void PrintImage(const std::vector<std::string>& image, std::ostream& output)
+void PrintImage(const Image& image, std::ostream& output)
 {
     for (const auto& line : image)
     {
@@ -119,61 +121,54 @@ void PrintImage(const std::vector<std::string>& image, std::ostream& output)
     }
 }
 
-int ExitWithError(int code = 1)
-{
-    std::cout << "ERROR" << std::endl;
-    return code;
-}
-
 int main(int argc, char* argv[])
 {
     if (argc > 3)
     {
         PrintUsage();
-        return ExitWithError();
+        throw std::invalid_argument(ERROR);
     }
 
     if (argc == 2 && std::string(argv[1]) == "-h")
     {
         PrintUsage();
-        return 0;
+        return EXIT_SUCCESS;
     }
 
-    bool wasError = false;
-    std::vector<std::string> image;
-
-    if (argc == 3)
+    try 
     {
-        std::ifstream input(argv[1]);
-        if (!input.is_open())
-        {
-            return ExitWithError();
-        }
-        image = ReadImage(input, wasError);
-        if (wasError)
-        {
-            return ExitWithError(EXIT_SUCCESS);
-        }
+        Image image;
         
-        ProcessImage(image);
-
-        std::ofstream output(argv[2]);
-        if (!output.is_open())
+        if (argc == 3)
         {
-            return ExitWithError();
+            std::ifstream input(argv[1]);
+            if (!input.is_open())
+            {
+                throw std::invalid_argument(ERROR);
+            }
+            image = ReadImage(input);
+            
+            ProcessImage(image);
+
+            std::ofstream output(argv[2]);
+            if (!output.is_open())
+            {
+                throw std::invalid_argument(ERROR);
+            }
+            PrintImage(image, output);
         }
-        PrintImage(image, output);
+        else
+        {
+            image = ReadImage(std::cin);
+            ProcessImage(image);
+            PrintImage(image, std::cout);
+        }
     }
-    else
+    catch (const std::exception& error)
     {
-        image = ReadImage(std::cin, wasError);
-        if (wasError)
-        {
-            return ExitWithError(EXIT_SUCCESS);
-        }
-        ProcessImage(image);
-        PrintImage(image, std::cout);
+        std::cout << "ERROR" << std::endl;
+        return EXIT_SUCCESS;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
