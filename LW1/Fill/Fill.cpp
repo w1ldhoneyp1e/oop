@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
     }
     catch (const std::exception& error)
     {
-        std::cout << "ERROR" << std::endl;
+        std::cout << error.what() << std::endl;
         return EXIT_SUCCESS;
     }
 
