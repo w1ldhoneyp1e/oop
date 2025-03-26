@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HtmlDecode", "..\..\LW2\Htm
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "catch2", "..\..\catch2\catch2.vcxproj", "{4DBEB3E2-C2D7-4942-B4FC-A5CDA66FA028}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dictionary", "..\..\LW2\Dictionary\Dictionary.vcxproj", "{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -89,6 +91,14 @@ Global
 		{4DBEB3E2-C2D7-4942-B4FC-A5CDA66FA028}.Release|x64.Build.0 = Release|x64
 		{4DBEB3E2-C2D7-4942-B4FC-A5CDA66FA028}.Release|x86.ActiveCfg = Release|Win32
 		{4DBEB3E2-C2D7-4942-B4FC-A5CDA66FA028}.Release|x86.Build.0 = Release|Win32
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Debug|x64.ActiveCfg = Debug|x64
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Debug|x64.Build.0 = Debug|x64
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Debug|x86.ActiveCfg = Debug|Win32
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Debug|x86.Build.0 = Debug|Win32
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Release|x64.ActiveCfg = Release|x64
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Release|x64.Build.0 = Release|x64
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Release|x86.ActiveCfg = Release|Win32
+		{4DE83848-B20C-4199-8F13-6A3CE44ADDF1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
