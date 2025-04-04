@@ -9,18 +9,16 @@ const std::map<std::string, char> HTML_ENTITIES = {
     {"&amp;", '&'}
 };
 
-bool TryDecodeEntity(const std::string& html, size_t pos, std::string& result, size_t& offset)
+std::string GetDecodeEntity(std::string const& html, size_t pos)
 {
     for (const auto& entity : HTML_ENTITIES)
     {
         if (html.compare(pos, entity.first.length(), entity.first) == 0)
         {
-            result += entity.second;
-            offset = entity.first.length() - 1;
-            return true;
+            return entity.first;
         }
     }
-    return false;
+    return "";
 }
 
 std::string HtmlDecode(std::string const& html)
@@ -32,20 +30,15 @@ std::string HtmlDecode(std::string const& html)
     {
         if (html[i] == '&')
         {
-            size_t offset = 0;
-            if (!TryDecodeEntity(html, i, result, offset))
+            std::string entity = GetDecodeEntity(html, i);
+            if (!entity.empty())
             {
-                result += html[i];
-            }
-            else
-            {
-                i += offset;
+                result += HTML_ENTITIES.at(entity);
+                i += entity.length() - 1;
+                continue;
             }
         }
-        else
-        {
-            result += html[i];
-        }
+        result += html[i];
     }
     return result;
 }

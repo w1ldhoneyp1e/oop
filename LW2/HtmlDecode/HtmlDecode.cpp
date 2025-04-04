@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#include "HtmlDecode_functions.hpp"
+#include "HtmlDecode_functions.h"
 
 int main()
 {

@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "HtmlDecode_functions.hpp"
+#include "HtmlDecode_functions.h"
 
 TEST_CASE("HtmlDecode handles empty string", "[HtmlDecode]")
 {
