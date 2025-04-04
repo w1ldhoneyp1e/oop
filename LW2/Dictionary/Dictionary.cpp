@@ -58,7 +58,7 @@ bool IsExitCommand(const std::string& input)
 
 // Interface
 
-void LoadDictionary(dictionaryType& dictionary, std::string& dictionaryPath)
+void LoadDictionary(dictionaryType& dictionary, std::string const& dictionaryPath)
 {
     std::ifstream file(dictionaryPath);
     if (!file)
@@ -93,7 +93,7 @@ std::vector<std::string> GetTranslations(const std::string& word, dictionaryType
     return translations;
 }
 
-void TryToSaveDictionary(std::ostream& output, dictionaryType& dictionary, std::string& dictionaryPath)
+void TryToSaveDictionary(std::ostream& output, dictionaryType& dictionary, std::string const& dictionaryPath)
 {
     std::ofstream file(dictionaryPath);
     if (!file)
@@ -108,7 +108,7 @@ void TryToSaveDictionary(std::ostream& output, dictionaryType& dictionary, std::
     output << "Изменения сохранены. До свидания." << std::endl;
 }
 
-void ProcessSaveDialog(std::istream& input, std::ostream& output, dictionaryType& dictionary, bool& hasChanges, std::string& dictionaryPath)
+void ProcessSaveDialog(std::istream& input, std::ostream& output, dictionaryType& dictionary, bool& hasChanges, std::string const& dictionaryPath)
 {
     if (hasChanges)
     {
