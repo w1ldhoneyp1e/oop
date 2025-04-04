@@ -1,4 +1,4 @@
-#include "Dictionary.hpp"
+#include "Dictionary.h"
 #include <iostream>
 #include <windows.h>
 
@@ -16,14 +16,17 @@ int main(int argc, char* argv[])
 
     try
     {
-        LoadDictionary(argv[1]);
-        ProcessUserInput(std::cin, std::cout);
-        ProcessSaveDialog(std::cin, std::cout);
+        dictionaryType dictionary;
+        bool hasChanges = false;
+        std::string dictionaryPath = argv[1];
+        LoadDictionary(dictionary, dictionaryPath);
+        ProcessUserInput(std::cin, std::cout, dictionary, hasChanges);
+        ProcessSaveDialog(std::cin, std::cout, dictionary, hasChanges, dictionaryPath);
         return EXIT_SUCCESS;
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Îøèáêà: " << e.what() << std::endl;
+        std::cerr << "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 }

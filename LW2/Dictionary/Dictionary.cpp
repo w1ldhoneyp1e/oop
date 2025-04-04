@@ -1,23 +1,21 @@
-#include "Dictionary.hpp"
+#include "Dictionary.h"
 #include <fstream>
 #include <map>
 #include <algorithm>
 #include <cctype>
 #include <iostream>
 
-std::multimap<std::string, std::string> dictionary;
-bool hasChanges = false;
-std::string dictionaryPath;
-
 std::string ToLower(const std::string& str)
 {
     std::string result = str;
     std::transform(result.begin(), result.end(), result.begin(),
-        [](unsigned char c) { return std::tolower(c); });
+        [](unsigned char c) { 
+            return std::tolower(c); 
+        });
     return result;
 }
 
-void AddTranslation(const std::string& word, const std::string& translation)
+void AddTranslation(dictionaryType& dictionary, const std::string& word, const std::string& translation, bool& hasChanges)
 {
     dictionary.insert({ ToLower(word), translation });
     dictionary.insert({ ToLower(translation), word });
@@ -36,7 +34,7 @@ void PrintTranslations(const std::vector<std::string>& translations, std::ostrea
     output << std::endl;
 }
 
-void ProcessUnknownWord(const std::string& word, std::istream& input, std::ostream& output)
+void ProcessUnknownWord(dictionaryType& dictionary, const std::string& word, std::istream& input, std::ostream& output, bool& hasChanges)
 {
     output << "Неизвестное слово \"" << word << "\". Введите перевод или пустую строку для отказа." << std::endl;
     std::string translation;
@@ -44,8 +42,8 @@ void ProcessUnknownWord(const std::string& word, std::istream& input, std::ostre
 
     if (!translation.empty())
     {
-        AddTranslation(word, translation);
-        output << "Слово \"" << word << "\" сохранено в словаре как \"" << translation << "\"." << std::endl;
+        AddTranslation(dictionary, word, translation, hasChanges);
+        output << "Слово \"" << word << "\" добавлено в словарь как \"" << translation << "\"." << std::endl;
     }
     else
     {
@@ -60,9 +58,8 @@ bool IsExitCommand(const std::string& input)
 
 // Interface
 
-void LoadDictionary(const std::string& path)
+void LoadDictionary(dictionaryType& dictionary, std::string& dictionaryPath)
 {
-    dictionaryPath = path;
     std::ifstream file(dictionaryPath);
     if (!file)
     {
@@ -82,7 +79,7 @@ void LoadDictionary(const std::string& path)
     }
 }
 
-std::vector<std::string> GetTranslations(const std::string& word)
+std::vector<std::string> GetTranslations(const std::string& word, dictionaryType& dictionary)
 {
     std::vector<std::string> translations;
     std::string lowerWord = ToLower(word);
@@ -96,7 +93,7 @@ std::vector<std::string> GetTranslations(const std::string& word)
     return translations;
 }
 
-void TryToSaveDictionary(std::ostream& output)
+void TryToSaveDictionary(std::ostream& output, dictionaryType& dictionary, std::string& dictionaryPath)
 {
     std::ofstream file(dictionaryPath);
     if (!file)
@@ -111,14 +108,9 @@ void TryToSaveDictionary(std::ostream& output)
     output << "Изменения сохранены. До свидания." << std::endl;
 }
 
-bool HasChanges()
+void ProcessSaveDialog(std::istream& input, std::ostream& output, dictionaryType& dictionary, bool& hasChanges, std::string& dictionaryPath)
 {
-    return hasChanges;
-}
-
-void ProcessSaveDialog(std::istream& input, std::ostream& output)
-{
-    if (HasChanges())
+    if (hasChanges)
     {
         output << "В словарь были внесены изменения. Введите Y или y для сохранения перед выходом." << std::endl;
         std::string answer;
@@ -126,12 +118,12 @@ void ProcessSaveDialog(std::istream& input, std::ostream& output)
 
         if (answer == "Y" || answer == "y")
         {
-            TryToSaveDictionary(output);
+            TryToSaveDictionary(output, dictionary, dictionaryPath);
         }
     }
 }
 
-void ProcessUserInput(std::istream& input, std::ostream& output)
+void ProcessUserInput(std::istream& input, std::ostream& output, dictionaryType& dictionary, bool& hasChanges)
 {
     std::string userInput;
     while (true)
@@ -142,10 +134,10 @@ void ProcessUserInput(std::istream& input, std::ostream& output)
         if (IsExitCommand(userInput))
             break;
 
-        auto translations = GetTranslations(userInput);
+        auto translations = GetTranslations(userInput, dictionary);
         if (translations.empty())
         {
-            ProcessUnknownWord(userInput, input, output);
+            ProcessUnknownWord(dictionary, userInput, input, output, hasChanges);
         }
         else
         {
