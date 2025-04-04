@@ -1,4 +1,4 @@
-﻿#include "LW2.1_functions.hpp"
+﻿#include "LW2.1_functions.h"
 #include <iostream>
 
 int main() 

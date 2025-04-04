@@ -59,28 +59,28 @@ void ProcessNumbers(std::vector<double>& numbers)
 
     double sum = std::accumulate(numbers.begin(), numbers.end(), 0.0, SumIfPositive);
 
-    int positive_count = std::count_if(numbers.begin(), numbers.end(), IsPositive);
+    int positiveCount = std::count_if(numbers.begin(), numbers.end(), IsPositive);
 
-    if (positive_count > 0)
+    if (positiveCount > 0)
     {
-        double average = sum / positive_count;
+        double average = sum / positiveCount;
         auto addAverageToNumber = [average](double val) {
             return val + average;
-            };
+        };
         std::transform(numbers.begin(), numbers.end(), numbers.begin(), addAverageToNumber);
     }
 }
 
 void PrintSortedNumbers(const std::vector<double>& numbers)
 {
-    std::vector<double> sorted_numbers = numbers;
-    std::sort(sorted_numbers.begin(), sorted_numbers.end());
+    std::vector<double> sortedNumbers = numbers;
+    std::sort(sortedNumbers.begin(), sortedNumbers.end());
 
     std::cout << std::fixed << std::setprecision(3);
-    for (size_t i = 0; i < sorted_numbers.size(); ++i)
+    for (size_t i = 0; i < sortedNumbers.size(); ++i)
     {
-        std::cout << sorted_numbers[i];
-        if (i < sorted_numbers.size() - 1)
+        std::cout << sortedNumbers[i];
+        if (i < sortedNumbers.size() - 1)
         {
             std::cout << " ";
         }

@@ -1,5 +1,5 @@
 #include <catch2/catch_all.hpp>
-#include "LW2.1_functions.hpp"
+#include "LW2.1_functions.h"
 #include <iostream>
 #include <sstream>
 
