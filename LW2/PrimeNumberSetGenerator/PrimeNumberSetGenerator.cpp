@@ -1,4 +1,4 @@
-#include "PrimeNumberSetGenerator.hpp"
+#include "PrimeNumberSetGenerator.h"
 #include <vector>
 #include <stdexcept>
 
