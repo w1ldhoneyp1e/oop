@@ -1,22 +1,22 @@
 #include <iostream>
+#include <windows.h>
+#include "Car.h"
+#include "RemoteControl.h"
 
 int main()
 {
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	setlocale(LC_ALL, "RU");
+
 	Car car;
 	RemoteControl remoteControl(car, std::cin, std::cout);
 
-	try
+	while (true)
 	{
-		while (true)
-		{
-			remoteControl.HandleCommand();
-		}
+		std::cout << ">";
+		remoteControl.HandleCommand();
 	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-		return EXIT_FAILURE;
-	}
-	
+
 	return EXIT_SUCCESS;
 }

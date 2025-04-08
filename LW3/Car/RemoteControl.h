@@ -11,22 +11,31 @@ public:
     void HandleCommand();
 
 private:
-    void Info();
-    void TurnOn();
-    void TurnOff();
-    void SetGear(std::istream& args);
-    void SetSpeed(std::istream& args);
+    Car& m_car;
+    std::istream& m_input;
+    std::ostream& m_output;
+
+    using Handler = std::function<void(int arg)>;
+    enum class Command
+    {
+        Info,
+        EngineOn,
+        EngineOff,
+        SetGear,
+        SetSpeed,
+        Unknown
+    };
+    using ActionMap = std::map<Command, Handler>;
+    const ActionMap m_actionMap;
+
+private:
+    void Info(int);
+    void TurnOn(int);
+    void TurnOff(int);
+    void SetGear(int gear);
+    void SetSpeed(int speed);
 
     std::string GetDirectionAsString();
     std::string GetGearAsString();
-
-private:
-    Car& car;
-    std::istream& input;
-    std::ostream& output;
-
-    using Handler = std::function<void(std::istream& args)>;
-    using ActionMap = std::map<std::string, Handler>;
-    const ActionMap actionMap;
+    Command StringToCommand(std::string& command);
 };
-

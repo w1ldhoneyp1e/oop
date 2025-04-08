@@ -7,15 +7,15 @@
 #include <functional>
 
 RemoteControl::RemoteControl(Car& car, std::istream& input, std::ostream& output)
-    : car(car)
-    , input(input)
-    , output(output)
-    , actionMap({
-          { "Info", [this](std::istream&) { Info(); } },
-          { "EngineOn", [this](std::istream&) { TurnOn(); } },
-          { "EngineOff", [this](std::istream&) { TurnOff(); } },
-          { "SetGear", std::bind(&RemoteControl::SetGear, this, std::placeholders::_1) },
-          { "SetSpeed", std::bind(&RemoteControl::SetSpeed, this, std::placeholders::_1) }
+    : m_car(car)
+    , m_input(input)
+    , m_output(output)
+    , m_actionMap({
+          { Command::Info, std::bind(&RemoteControl::Info, this, std::placeholders::_1) },
+          { Command::EngineOn, std::bind(&RemoteControl::TurnOn, this, std::placeholders::_1) },
+          { Command::EngineOff, std::bind(&RemoteControl::TurnOff, this, std::placeholders::_1) },
+          { Command::SetGear, std::bind(&RemoteControl::SetGear, this, std::placeholders::_1) },
+          { Command::SetSpeed, std::bind(&RemoteControl::SetSpeed, this, std::placeholders::_1) }
       })
 {
 }
@@ -23,59 +23,91 @@ RemoteControl::RemoteControl(Car& car, std::istream& input, std::ostream& output
 void RemoteControl::HandleCommand()
 {
 	std::string commandLine;
-	getline(input, commandLine);
+	getline(m_input, commandLine);
 	std::istringstream strm(commandLine);
 
-	std::string command;
-	strm >> command;
-
-	auto action = actionMap.find(command);
-	if (action != actionMap.end())
+	try
 	{
-		return action->second(strm);
+		std::string commandAsString;
+		int arg;
+		strm >> commandAsString;
+		strm >> arg;
+		Command command = StringToCommand(commandAsString);
+		auto action = m_actionMap.find(command);
+		switch (command)
+		{
+		case Command::Info:
+		case Command::EngineOn:
+		case Command::EngineOff:
+		{
+			if (strm.get() != EOF)
+			{
+				throw std::invalid_argument("Ошибка: команда не принимает аргумент\n");
+			}
+			action->second(0);
+			return;
+		}
+		case Command::SetGear:
+		case Command::SetSpeed:
+		{
+			std::string strEmpty;
+			if ((strm >> strEmpty) || strm.get() != EOF)
+			{
+				throw std::invalid_argument("Ошибка: аргумент должен быть целым числом\n");
+			}
+			action->second(arg);
+			return;
+		}
+		default:
+			throw std::invalid_argument("Ошибка: неизвестная команда\n");
+		}
+	}
+	catch (const std::exception& e)
+	{
+		m_output << e.what() << "\n";
 	}
 }
-
-void RemoteControl::Info()
+	
+void RemoteControl::Info(int)
 {
-	std::string engineInfo = (car.IsTurnedOn())
+	std::string engineInfo = (m_car.IsEngineOn())
 		? "Машина заведена\n"
 		: "Машина заглушена\n";
 
 	std::string gearInfo = "Передача: " + GetGearAsString() + "\n";
-	std::string speedInfo = "Скорость: " + std::to_string(car.GetSpeed()) + "\n";
+	std::string speedInfo = "Скорость: " + std::to_string(m_car.GetSpeed()) + "\n";
 	std::string directionInfo = "Направление: " + GetDirectionAsString() + "\n";
 
-	output << engineInfo << gearInfo << speedInfo << directionInfo;
+	m_output << engineInfo << gearInfo << speedInfo << directionInfo;
 }
 
-void RemoteControl::TurnOn()
+void RemoteControl::TurnOn(int)
 {
-	car.TurnOn();
+	m_car.TurnOnEngine();
+	m_output << "Машина заведена\n";
 }
 
-void RemoteControl::TurnOff()
+void RemoteControl::TurnOff(int)
 {
-	car.TurnOff();
+	m_car.TurnOffEngine();
+	m_output << "Машина заглушена\n";
 }
 
-void RemoteControl::SetGear(std::istream& args)
+void RemoteControl::SetGear(int gear)
 {
-	int gear;
-	args >> gear;
-	car.SetGear(gear);
+	m_car.SetGear(gear);
+	m_output << "Передача установлена\n";
 }
 
-void RemoteControl::SetSpeed(std::istream& args)
+void RemoteControl::SetSpeed(int speed)
 {
-	int speed;
-	args >> speed;
-	car.SetSpeed(speed);
+	m_car.SetSpeed(speed);
+	m_output << "Скорость установлена\n";
 }
 
 std::string RemoteControl::GetDirectionAsString()
 {
-	switch (car.GetDirection())
+	switch (m_car.GetDirection())
 	{
 	case Car::Direction::Backward:
 		return "Назад";
@@ -88,21 +120,46 @@ std::string RemoteControl::GetDirectionAsString()
 
 std::string RemoteControl::GetGearAsString()
 {
-	switch (car.GetGear())
+	switch (m_car.GetGear())
 	{
-	case Car::Gear::-1:
+	case Car::Gear::Reverse:
 		return "Задний ход";
-	case Car::Gear::0:
+	case Car::Gear::Neutral:
 		return "Нейтраль";
-	case Car::Gear::1:
+	case Car::Gear::First:
 		return "Первая";
-	case Car::Gear::2:
+	case Car::Gear::Second:
 		return "Вторая";
-	case Car::Gear::3:
+	case Car::Gear::Third:
 		return "Третья";
-	case Car::Gear::4:
+	case Car::Gear::Fourth:
 		return "Четвертая";
-	case Car::Gear::5:
+	case Car::Gear::Fifth:
 		return "Пятая";
 	}
+}
+
+RemoteControl::Command RemoteControl::StringToCommand(std::string& command)
+{
+	if (command == "Info")
+	{
+		return Command::Info;
+	}
+	if (command == "EngineOn")
+	{
+		return Command::EngineOn;
+	}
+	if (command == "EngineOff")
+	{
+		return Command::EngineOff;
+	}
+	if (command == "SetGear")
+	{
+		return Command::SetGear;
+	}
+	if (command == "SetSpeed")
+	{
+		return Command::SetSpeed;
+	}
+	return Command::Unknown;
 }
