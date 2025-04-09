@@ -13,7 +13,7 @@ void Car::TurnOnEngine()
 {
     if (m_isEngineOn)
     {
-        throw std::logic_error("Машина уже заведена");
+        throw std::logic_error("Car is already started");
     }
     m_isEngineOn = true;
 }
@@ -22,56 +22,60 @@ void Car::TurnOffEngine()
 {
     if (!m_isEngineOn)
     {
-        throw std::logic_error("Машина не заведена");
+        throw std::logic_error("Car is not started");
     }
     if (m_speed != 0)
     {
-        throw std::logic_error("Машина не может быть заглушена, если она в движении");
+        throw std::logic_error("Car cannot be turned off while moving");
     }
     if (m_gear != Gear::Neutral)
     {
-        throw std::logic_error("Машина не может быть заглушена, если она не в нейтральной передаче");
+        throw std::logic_error("Car must be stopped and in neutral gear");
     }
     m_isEngineOn = false;
 }
 
 void Car::SetGear(int gear)
 {
-    if (!m_isEngineOn)
-    {
-        throw std::logic_error("Машина не заведена, чтобы переключить передачу");
-    }
     if (gear < -1 || gear > 5)
     {
-        throw std::logic_error("Передача не существует");
+        throw std::logic_error("Invalid gear");
+    }
+    if (!m_isEngineOn)
+    {
+        throw std::logic_error("Cannot set gear while engine is off");
     }
 
     const Car::Gear gearTyped = static_cast<Gear>(gear);
 
     if (gearLimits.find(gearTyped)->second.first > m_speed || gearLimits.find(gearTyped)->second.second < m_speed)
     {
-        throw std::logic_error("Передача не соответствует скорости");
+        throw std::logic_error("Unsuitable current speed");
     }
     if (gearTyped == Gear::Reverse && m_speed != 0)
     {
-        throw std::logic_error("Нельзя включить заднюю передачу, если машина в движении");
+        throw std::logic_error("Cannot reverse while moving");
     }
     m_gear = gearTyped;
 }
 
 void Car::SetSpeed(int speed)
 {
+    if (speed < 0)
+    {
+        throw std::logic_error("Speed cannot be negative");
+    }
     if (!m_isEngineOn)
     {
-        throw std::logic_error("Машина не заведена, чтобы изменить скорость");
+        throw std::logic_error("Cannot set speed while engine is off");
     }
-    if (m_gear == Gear::Neutral && speed > 0)
+    if (m_gear == Gear::Neutral && (speed - m_speed) > 0)
     {
-        throw std::logic_error("Нельзя увеличить скорость, если машина в нейтральной передаче");
+        throw std::logic_error("Cannot accelerate on neutral");
     }
     if (gearLimits.find(m_gear)->second.first > speed || gearLimits.find(m_gear)->second.second < speed)
     {
-        throw std::logic_error("Скорость не соответствует передаче");
+        throw std::logic_error("Speed is out of gear range");
     }
     if (speed == 0)
     {
@@ -85,7 +89,7 @@ void Car::SetSpeed(int speed)
     {
         m_direction = Direction::Forward;
     }
-    speed = static_cast<Speed>(speed);
+    m_speed = static_cast<Speed>(speed);
 }
 
 Car::Gear Car::GetGear() const

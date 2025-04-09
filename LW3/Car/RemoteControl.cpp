@@ -29,20 +29,20 @@ void RemoteControl::HandleCommand()
 	try
 	{
 		std::string commandAsString;
-		int arg;
 		strm >> commandAsString;
-		strm >> arg;
 		Command command = StringToCommand(commandAsString);
 		auto action = m_actionMap.find(command);
+
 		switch (command)
 		{
 		case Command::Info:
 		case Command::EngineOn:
 		case Command::EngineOff:
 		{
-			if (strm.get() != EOF)
+			std::string extraArg;
+			if (strm >> extraArg)
 			{
-				throw std::invalid_argument("Ошибка: команда не принимает аргумент\n");
+				throw std::invalid_argument("Invalid command argument\n");
 			}
 			action->second(0);
 			return;
@@ -50,33 +50,38 @@ void RemoteControl::HandleCommand()
 		case Command::SetGear:
 		case Command::SetSpeed:
 		{
-			std::string strEmpty;
-			if ((strm >> strEmpty) || strm.get() != EOF)
+			int arg;
+			if (!(strm >> arg))
 			{
-				throw std::invalid_argument("Ошибка: аргумент должен быть целым числом\n");
+				throw std::invalid_argument("Invalid command argument\n");
+			}
+			std::string extraArg;
+			if (strm >> extraArg)
+			{
+				throw std::invalid_argument("Invalid command argument\n");
 			}
 			action->second(arg);
 			return;
 		}
 		default:
-			throw std::invalid_argument("Ошибка: неизвестная команда\n");
+			throw std::invalid_argument("Unknown command\n");
 		}
 	}
 	catch (const std::exception& e)
 	{
-		m_output << e.what() << "\n";
+		m_output << e.what();
 	}
 }
 	
 void RemoteControl::Info(int)
 {
 	std::string engineInfo = (m_car.IsEngineOn())
-		? "Машина заведена\n"
-		: "Машина заглушена\n";
+		? "Engine is on\n"
+		: "Engine is off\n";
 
-	std::string gearInfo = "Передача: " + GetGearAsString() + "\n";
-	std::string speedInfo = "Скорость: " + std::to_string(m_car.GetSpeed()) + "\n";
-	std::string directionInfo = "Направление: " + GetDirectionAsString() + "\n";
+	std::string gearInfo = "Gear: " + GetGearAsString() + "\n";
+	std::string speedInfo = "Speed: " + std::to_string(m_car.GetSpeed()) + "\n";
+	std::string directionInfo = "Direction: " + GetDirectionAsString() + "\n";
 
 	m_output << engineInfo << gearInfo << speedInfo << directionInfo;
 }
@@ -84,25 +89,21 @@ void RemoteControl::Info(int)
 void RemoteControl::TurnOn(int)
 {
 	m_car.TurnOnEngine();
-	m_output << "Машина заведена\n";
 }
 
 void RemoteControl::TurnOff(int)
 {
 	m_car.TurnOffEngine();
-	m_output << "Машина заглушена\n";
 }
 
 void RemoteControl::SetGear(int gear)
 {
 	m_car.SetGear(gear);
-	m_output << "Передача установлена\n";
 }
 
 void RemoteControl::SetSpeed(int speed)
 {
 	m_car.SetSpeed(speed);
-	m_output << "Скорость установлена\n";
 }
 
 std::string RemoteControl::GetDirectionAsString()
@@ -110,11 +111,11 @@ std::string RemoteControl::GetDirectionAsString()
 	switch (m_car.GetDirection())
 	{
 	case Car::Direction::Backward:
-		return "Назад";
+		return "Backward";
 	case Car::Direction::Forward:
-		return "Вперед";
+		return "Forward";
 	default:
-		return "Стоит на месте";
+		return "Stopped";
 	}
 }
 
@@ -123,19 +124,19 @@ std::string RemoteControl::GetGearAsString()
 	switch (m_car.GetGear())
 	{
 	case Car::Gear::Reverse:
-		return "Задний ход";
+		return "Reverse";
 	case Car::Gear::Neutral:
-		return "Нейтраль";
+		return "Neutral";
 	case Car::Gear::First:
-		return "Первая";
+		return "First";
 	case Car::Gear::Second:
-		return "Вторая";
+		return "Second";
 	case Car::Gear::Third:
-		return "Третья";
+		return "Third";
 	case Car::Gear::Fourth:
-		return "Четвертая";
+		return "Fourth";
 	case Car::Gear::Fifth:
-		return "Пятая";
+		return "Fifth";
 	}
 }
 
