@@ -41,28 +41,115 @@ TEST_CASE("Variable declaration and initialization")
     }
 }
 
-TEST_CASE("Function declaration")
+TEST_CASE("Function declaration and evaluation")
 {
     Calculator calc;
     std::stringstream output;
 
-    SECTION("Can declare simple function")
+    SECTION("Can declare function with single variable")
     {
         calc.HandleCommand("var x");
-        REQUIRE_NOTHROW(calc.HandleCommand("fn f = x"));
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("fn f = x");
+        calc.HandleCommand("print f", output);
+        REQUIRE(output.str() == "42.50\n");
     }
 
-    SECTION("Can declare function with operation")
+    SECTION("Can declare function with addition")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("var y");
+        calc.HandleCommand("let y = 7.5");
+        calc.HandleCommand("fn sum = x+y");
+        calc.HandleCommand("print sum", output);
+        REQUIRE(output.str() == "50.00\n");
+    }
+
+    SECTION("Can declare function with subtraction")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("var y");
+        calc.HandleCommand("let y = 7.5");
+        calc.HandleCommand("fn diff = x-y");
+        calc.HandleCommand("print diff", output);
+        REQUIRE(output.str() == "35.00\n");
+    }
+
+    SECTION("Can declare function with multiplication")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("var y");
+        calc.HandleCommand("let y = 2");
+        calc.HandleCommand("fn mult = x*y");
+        calc.HandleCommand("print mult", output);
+        REQUIRE(output.str() == "85.00\n");
+    }
+
+    SECTION("Can declare function with division")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("var y");
+        calc.HandleCommand("let y = 2");
+        calc.HandleCommand("fn div = x/y");
+        calc.HandleCommand("print div", output);
+        REQUIRE(output.str() == "21.25\n");
+    }
+
+    SECTION("Division by zero returns nan")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("var y");
+        calc.HandleCommand("let y = 0");
+        calc.HandleCommand("fn div = x/y");
+        calc.HandleCommand("print div", output);
+        REQUIRE(output.str() == "nan\n");
+    }
+
+    SECTION("Function with undefined variable returns nan")
     {
         calc.HandleCommand("var x");
         calc.HandleCommand("var y");
-        REQUIRE_NOTHROW(calc.HandleCommand("fn sum = x + y"));
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("fn sum = x+y");
+        calc.HandleCommand("print sum", output);
+        REQUIRE(output.str() == "nan\n");
     }
 
-    SECTION("Cannot declare function with undefined variables")
+    SECTION("Cannot declare function with same name as variable")
     {
-        calc.HandleCommand("fn f = x + y", output);
-        REQUIRE(output.str() == "Name does not exist\n");
+        calc.HandleCommand("var x");
+        calc.HandleCommand("fn x = y", output);
+        REQUIRE(output.str() == "Name already exists\n");
+    }
+
+    SECTION("Cannot declare function twice")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("fn f = x");
+        calc.HandleCommand("fn f = x", output);
+        REQUIRE(output.str() == "Name already exists\n");
+    }
+
+    SECTION("Function value updates when variables change")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("var y");
+        calc.HandleCommand("let y = 7.5");
+        calc.HandleCommand("fn sum = x+y");
+        calc.HandleCommand("print sum", output);
+        std::string firstResult = output.str();
+        output.str("");
+
+        calc.HandleCommand("let x = 10");
+        calc.HandleCommand("print sum", output);
+        REQUIRE(firstResult != output.str());
+        REQUIRE(output.str() == "17.50\n");
     }
 }
 
