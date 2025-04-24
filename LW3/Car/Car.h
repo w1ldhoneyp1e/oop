@@ -44,17 +44,5 @@ private:
 
 	Gear m_gear;
 	Direction m_direction;
-
-    using SpeedRange = std::pair<Speed, Speed>;
-    using GearLimits = std::map<Gear, SpeedRange>;
-    const GearLimits gearLimits = {
-        {Gear::Reverse, {0, 20}},
-        {Gear::Neutral, {0, 150}},
-        {Gear::First, {0, 30}},
-        {Gear::Second, {20, 50}},
-        {Gear::Third, {30, 60}},
-        {Gear::Fourth, {40, 90}},
-        {Gear::Fifth, {50, 150}}
-    };
 };
 

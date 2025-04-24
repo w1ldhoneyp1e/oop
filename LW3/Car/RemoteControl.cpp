@@ -6,16 +6,18 @@
 #include <map>
 #include <functional>
 
+using Handler = std::function<void(std::istream&)>;
+
 RemoteControl::RemoteControl(Car& car, std::istream& input, std::ostream& output)
     : m_car(car)
     , m_input(input)
     , m_output(output)
     , m_actionMap({
-          { Command::Info, std::bind(&RemoteControl::Info, this, std::placeholders::_1) },
-          { Command::EngineOn, std::bind(&RemoteControl::TurnOn, this, std::placeholders::_1) },
-          { Command::EngineOff, std::bind(&RemoteControl::TurnOff, this, std::placeholders::_1) },
-          { Command::SetGear, std::bind(&RemoteControl::SetGear, this, std::placeholders::_1) },
-          { Command::SetSpeed, std::bind(&RemoteControl::SetSpeed, this, std::placeholders::_1) }
+		  { "Info", std::bind(&RemoteControl::Info, this, std::placeholders::_1) },
+		  { "EngineOn", std::bind(&RemoteControl::TurnOn, this, std::placeholders::_1) },
+		  { "EngineOff", std::bind(&RemoteControl::TurnOff, this, std::placeholders::_1) },
+		  { "SetGear", std::bind(&RemoteControl::SetGear, this, std::placeholders::_1) },
+          { "SetSpeed", std::bind(&RemoteControl::SetSpeed, this, std::placeholders::_1)}
       })
 {
 }
@@ -28,44 +30,14 @@ void RemoteControl::HandleCommand()
 
 	try
 	{
-		std::string commandAsString;
-		strm >> commandAsString;
-		Command command = StringToCommand(commandAsString);
-		auto action = m_actionMap.find(command);
-
-		switch (command)
+		std::string command;
+		strm >> command;
+		auto action = m_actionMap.find(command); // delete Command, obrabotku vinesti v method
+		if (action == m_actionMap.end())
 		{
-		case Command::Info:
-		case Command::EngineOn:
-		case Command::EngineOff:
-		{
-			std::string extraArg;
-			if (strm >> extraArg)
-			{
-				throw std::invalid_argument("Invalid command argument\n");
-			}
-			action->second(0);
-			return;
-		}
-		case Command::SetGear:
-		case Command::SetSpeed:
-		{
-			int arg;
-			if (!(strm >> arg))
-			{
-				throw std::invalid_argument("Invalid command argument\n");
-			}
-			std::string extraArg;
-			if (strm >> extraArg)
-			{
-				throw std::invalid_argument("Invalid command argument\n");
-			}
-			action->second(arg);
-			return;
-		}
-		default:
 			throw std::invalid_argument("Unknown command\n");
 		}
+		action->second(strm);
 	}
 	catch (const std::exception& e)
 	{
@@ -73,8 +45,10 @@ void RemoteControl::HandleCommand()
 	}
 }
 	
-void RemoteControl::Info(int)
+void RemoteControl::Info(std::istream& strm)
 {
+	ValidateWithoutArgs(strm);
+
 	std::string engineInfo = (m_car.IsEngineOn())
 		? "Engine is on\n"
 		: "Engine is off\n";
@@ -86,24 +60,28 @@ void RemoteControl::Info(int)
 	m_output << engineInfo << gearInfo << speedInfo << directionInfo;
 }
 
-void RemoteControl::TurnOn(int)
+void RemoteControl::TurnOn(std::istream& strm)
 {
+	ValidateWithoutArgs(strm);
 	m_car.TurnOnEngine();
 }
 
-void RemoteControl::TurnOff(int)
+void RemoteControl::TurnOff(std::istream& strm)
 {
+	ValidateWithoutArgs(strm);
 	m_car.TurnOffEngine();
 }
 
-void RemoteControl::SetGear(int gear)
+void RemoteControl::SetGear(std::istream& strm)
 {
-	m_car.SetGear(gear);
+	int arg = ValidateWithArgs(strm);
+	m_car.SetGear(arg);
 }
 
-void RemoteControl::SetSpeed(int speed)
+void RemoteControl::SetSpeed(std::istream& strm)
 {
-	m_car.SetSpeed(speed);
+	int arg = ValidateWithArgs(strm);
+	m_car.SetSpeed(arg);
 }
 
 std::string RemoteControl::GetDirectionAsString()
@@ -140,27 +118,27 @@ std::string RemoteControl::GetGearAsString()
 	}
 }
 
-RemoteControl::Command RemoteControl::StringToCommand(std::string& command)
+void RemoteControl::ValidateWithoutArgs(std::istream& strm)
 {
-	if (command == "Info")
+	std::string extraArg;
+	if (strm >> extraArg)
 	{
-		return Command::Info;
+		throw std::invalid_argument("Invalid command argument\n");
 	}
-	if (command == "EngineOn")
+}
+
+int RemoteControl::ValidateWithArgs(std::istream& strm)
+{
+	int arg;
+	if (!(strm >> arg))
 	{
-		return Command::EngineOn;
+		throw std::invalid_argument("Invalid command argument\n");
 	}
-	if (command == "EngineOff")
+	std::string extraArg;
+	if (strm >> extraArg)
 	{
-		return Command::EngineOff;
+		throw std::invalid_argument("Invalid command argument\n");
 	}
-	if (command == "SetGear")
-	{
-		return Command::SetGear;
-	}
-	if (command == "SetSpeed")
-	{
-		return Command::SetSpeed;
-	}
-	return Command::Unknown;
+
+	return arg;
 }

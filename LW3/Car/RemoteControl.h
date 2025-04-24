@@ -1,8 +1,8 @@
 #pragma once
-#include "Car.h"
 #include <functional>
 #include <map>
 #include <string>
+#include "Car.h"
 
 class RemoteControl
 {
@@ -15,27 +15,20 @@ private:
     std::istream& m_input;
     std::ostream& m_output;
 
-    using Handler = std::function<void(int arg)>;
-    enum class Command
-    {
-        Info,
-        EngineOn,
-        EngineOff,
-        SetGear,
-        SetSpeed,
-        Unknown
-    };
-    using ActionMap = std::map<Command, Handler>;
+    using Handler = std::function<void(std::istream&)>;
+    using ActionMap = std::map<std::string, Handler>;
     const ActionMap m_actionMap;
 
 private:
-    void Info(int);
-    void TurnOn(int);
-    void TurnOff(int);
-    void SetGear(int gear);
-    void SetSpeed(int speed);
+    void Info(std::istream& strm);
+    void TurnOn(std::istream& strm);
+    void TurnOff(std::istream& strm);
+    void SetGear(std::istream& strm);
+    void SetSpeed(std::istream& strm);
+
+    void ValidateWithoutArgs(std::istream& strm);
+    int ValidateWithArgs(std::istream& strm);
 
     std::string GetDirectionAsString();
     std::string GetGearAsString();
-    Command StringToCommand(std::string& command);
 };

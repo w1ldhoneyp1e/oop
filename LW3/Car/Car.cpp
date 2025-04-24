@@ -1,6 +1,21 @@
 #include <stdexcept>
 #include "Car.h"
 
+using SpeedRange = std::pair<Car::Speed, Car::Speed>; // vinesti v cpp
+using GearLimits = std::map<Car::Gear, SpeedRange>;
+const GearLimits gearLimits = {
+    {Car::Gear::Reverse, {0, 20}},
+    {Car::Gear::Neutral, {0, 150}},
+    {Car::Gear::First, {0, 30}},
+    {Car::Gear::Second, {20, 50}},
+    {Car::Gear::Third, {30, 60}},
+    {Car::Gear::Fourth, {40, 90}},
+    {Car::Gear::Fifth, {50, 150}}
+};
+
+const signed char MIN_GEAR = -1;
+const signed char MAX_GEAR = 5;
+
 Car::Car()
 {
     m_isEngineOn = false;
@@ -37,7 +52,7 @@ void Car::TurnOffEngine()
 
 void Car::SetGear(int gear)
 {
-    if (gear < -1 || gear > 5)
+    if (gear < MIN_GEAR || gear > MAX_GEAR) // v const limits
     {
         throw std::logic_error("Invalid gear");
     }
@@ -48,7 +63,8 @@ void Car::SetGear(int gear)
 
     const Car::Gear gearTyped = static_cast<Gear>(gear);
 
-    if (gearLimits.find(gearTyped)->second.first > m_speed || gearLimits.find(gearTyped)->second.second < m_speed)
+    const auto speedLimit = gearLimits.find(gearTyped);
+    if (speedLimit->second.first > m_speed || speedLimit->second.second < m_speed) // vinesti 
     {
         throw std::logic_error("Unsuitable current speed");
     }
@@ -73,11 +89,12 @@ void Car::SetSpeed(int speed)
     {
         throw std::logic_error("Cannot accelerate on neutral");
     }
-    if (gearLimits.find(m_gear)->second.first > speed || gearLimits.find(m_gear)->second.second < speed)
+    const auto speedLimit = gearLimits.find(m_gear);
+    if (speedLimit->second.first > speed || speedLimit->second.second < speed) // pereisp find
     {
         throw std::logic_error("Speed is out of gear range");
     }
-    if (speed == 0)
+    if (speed == 0) // v func vinesti
     {
         m_direction = Direction::Stop;
     }

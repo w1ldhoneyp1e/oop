@@ -1,9 +1,9 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_all.hpp>
-#include "Car.h"
-#include "RemoteControl.h"
 #include <sstream>
 #include <iostream>
+#include "Car.h"
+#include "RemoteControl.h"
 
 TEST_CASE("Car initialization")
 {
@@ -106,10 +106,83 @@ TEST_CASE("Car speed operations")
         REQUIRE(car.GetDirection() == Car::Direction::Forward);
     }
 
-    SECTION("Cannot exceed gear speed limits")
+    SECTION("All speed limits") // vse sluchai
     {
-        car.SetGear(1);
-        REQUIRE_THROWS_WITH(car.SetSpeed(40), "Speed is out of gear range");
+        SECTION("Reverse gear")
+        {
+            car.SetGear(-1);
+
+            REQUIRE_NOTHROW(car.SetSpeed(0));
+            REQUIRE_NOTHROW(car.SetSpeed(20));
+
+            REQUIRE_THROWS_WITH(car.SetSpeed(21), "Speed is out of gear range");
+        }
+
+        SECTION("First gear")
+        {
+            car.SetGear(1);
+
+            REQUIRE_NOTHROW(car.SetSpeed(0));
+            REQUIRE_NOTHROW(car.SetSpeed(30));
+
+            REQUIRE_THROWS_WITH(car.SetSpeed(31), "Speed is out of gear range");
+        }
+
+        SECTION("Second gear")
+        {
+            car.SetGear(1);
+            car.SetSpeed(20);
+            car.SetGear(2);
+
+            REQUIRE_NOTHROW(car.SetSpeed(20));
+            REQUIRE_NOTHROW(car.SetSpeed(50));
+
+            REQUIRE_THROWS_WITH(car.SetSpeed(19), "Speed is out of gear range");
+            REQUIRE_THROWS_WITH(car.SetSpeed(51), "Speed is out of gear range");
+        }
+
+        SECTION("Third gear")
+        {
+            car.SetGear(1);
+            car.SetSpeed(30);
+            car.SetGear(3);
+
+            REQUIRE_NOTHROW(car.SetSpeed(30));
+            REQUIRE_NOTHROW(car.SetSpeed(60));
+
+            REQUIRE_THROWS_WITH(car.SetSpeed(29), "Speed is out of gear range");
+            REQUIRE_THROWS_WITH(car.SetSpeed(61), "Speed is out of gear range");
+        }
+
+        SECTION("Fourth gear")
+        {
+            car.SetGear(1);
+            car.SetSpeed(30);
+            car.SetGear(3);
+            car.SetSpeed(40);
+            car.SetGear(4);
+
+            REQUIRE_NOTHROW(car.SetSpeed(40));
+            REQUIRE_NOTHROW(car.SetSpeed(90));
+
+            REQUIRE_THROWS_WITH(car.SetSpeed(39), "Speed is out of gear range");
+            REQUIRE_THROWS_WITH(car.SetSpeed(91), "Speed is out of gear range");
+        }
+
+        SECTION("Fifth gear")
+        {
+            car.SetGear(1);
+            car.SetSpeed(30);
+            car.SetGear(3);
+            car.SetSpeed(50);
+            car.SetGear(5);
+
+            REQUIRE_NOTHROW(car.SetSpeed(50));
+            REQUIRE_NOTHROW(car.SetSpeed(150));
+
+            REQUIRE_THROWS_WITH(car.SetSpeed(49), "Speed is out of gear range");
+            REQUIRE_THROWS_WITH(car.SetSpeed(151), "Speed is out of gear range");
+        }
     }
 
     SECTION("Cannot set negative speed")
