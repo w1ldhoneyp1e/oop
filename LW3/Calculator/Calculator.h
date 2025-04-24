@@ -16,9 +16,12 @@ private:
     void HandleLet(std::istringstream& iss);
     void HandleFn(std::istringstream& iss);
     void HandlePrint(std::istringstream& iss, std::ostream& output);
-    bool ValidateIdentifier(const std::string& identifier) const;
-    bool IdentifierExists(const std::string& identifier) const;
+    void CheckIdentifierValidation(const std::string& identifier) const;
+    void CheckIdentifierExistance(const std::string& identifier) const;
     static std::string RemoveSpaces(const std::string& str);
+    Variable& GetOrCreateVariable(const std::string& identifier);
+    void HandleFnAssignment(std::istringstream& iss, const std::string& expression, const std::string& identifier);
+    std::map<std::string, Variable>::const_iterator TryFindVariable(const std::string& identifier) const;
 
     std::map<std::string, Variable> m_variables;
     std::map<std::string, Function> m_functions;
