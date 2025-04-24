@@ -7,14 +7,7 @@ int main()
     std::string command;
     while (std::getline(std::cin, command))
     {
-        try
-        {
-            calc.HandleCommand(command, std::cout);
-        }
-        catch (const std::invalid_argument& e)
-        {
-            std::cout << e.what() << std::endl;
-        }
+        calc.HandleCommand(command, std::cout);
     }
     return 0;
 }

@@ -132,4 +132,52 @@ TEST_CASE("Print all variables and functions")
         calc.HandleCommand("printfns", output);
         REQUIRE(output.str() == "diff:35.00\nsum:50.00\n");
     }
+}
+
+TEST_CASE("Let command")
+{
+    Calculator calc;
+    std::stringstream output;
+
+    SECTION("Can initialize variable with number")
+    {
+        calc.HandleCommand("var x");
+        REQUIRE_NOTHROW(calc.HandleCommand("let x = 42.5"));
+        calc.HandleCommand("print x", output);
+        REQUIRE(output.str() == "42.50\n");
+    }
+
+    SECTION("Can initialize variable with another variable")
+    {
+        calc.HandleCommand("var x");
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("var y");
+        REQUIRE_NOTHROW(calc.HandleCommand("let y = x"));
+        calc.HandleCommand("print y", output);
+        REQUIRE(output.str() == "42.50\n");
+    }
+
+    SECTION("Can initialize undefined variable")
+    {
+        REQUIRE_NOTHROW(calc.HandleCommand("let x = 42.5"));
+        calc.HandleCommand("print x", output);
+        REQUIRE(output.str() == "42.50\n");
+    }
+
+    SECTION("Cannot initialize with undefined variable")
+    {
+        calc.HandleCommand("let x = y", output);
+        REQUIRE(output.str() == "Name does not exist\n");
+    }
+
+    SECTION("Can handle spaces in expression")
+    {
+        calc.HandleCommand("let x = 42.5");
+        calc.HandleCommand("let y=42.5");
+        calc.HandleCommand("print x", output);
+        std::string result1 = output.str();
+        output.str("");
+        calc.HandleCommand("print y", output);
+        REQUIRE(result1 == output.str());
+    }
 } 
