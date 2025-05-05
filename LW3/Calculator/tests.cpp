@@ -3,7 +3,7 @@
 #include "Calculator.h"
 #include <sstream>
 
-TEST_CASE("Variable declaration and initialization")
+TEST_CASE("Variable declaration")
 {
     Calculator calc;
     std::stringstream output;
@@ -41,7 +41,7 @@ TEST_CASE("Variable declaration and initialization")
     }
 }
 
-TEST_CASE("Function declaration and evaluation")
+TEST_CASE("Function declaration")
 {
     Calculator calc;
     std::stringstream output;
@@ -190,7 +190,7 @@ TEST_CASE("Print all variables and functions")
     Calculator calc;
     std::stringstream output;
 
-    SECTION("Print empty lists")
+    SECTION("Empty lists print nothing")
     {
         calc.HandleCommand("printvars", output);
         REQUIRE(output.str() == "");
@@ -199,25 +199,28 @@ TEST_CASE("Print all variables and functions")
         REQUIRE(output.str() == "");
     }
 
-    SECTION("Print variables")
+    SECTION("Print all variables")
     {
         calc.HandleCommand("var x");
         calc.HandleCommand("let x = 42.5");
         calc.HandleCommand("var y");
+        calc.HandleCommand("let y = 10.0");
+        calc.HandleCommand("var z");
         calc.HandleCommand("printvars", output);
-        REQUIRE(output.str() == "x:42.50\ny:nan\n");
+        REQUIRE(output.str() == "x:42.50\ny:10.00\nz:nan\n");
     }
 
-    SECTION("Print functions")
+    SECTION("Print all functions")
     {
         calc.HandleCommand("var x");
         calc.HandleCommand("let x = 42.5");
         calc.HandleCommand("var y");
         calc.HandleCommand("let y = 7.5");
-        calc.HandleCommand("fn sum = x + y");
-        calc.HandleCommand("fn diff = x - y");
+        calc.HandleCommand("fn sum = x+y");
+        calc.HandleCommand("fn mult = x*y");
+        calc.HandleCommand("fn val = x");
         calc.HandleCommand("printfns", output);
-        REQUIRE(output.str() == "diff:35.00\nsum:50.00\n");
+        REQUIRE(output.str() == "mult:318.75\nsum:50.00\nval:42.50\n");
     }
 }
 
@@ -259,12 +262,20 @@ TEST_CASE("Let command")
 
     SECTION("Can handle spaces in expression")
     {
+        Calculator calc;
+        std::stringstream output;
+
+        calc.HandleCommand("var x");
+        calc.HandleCommand("var y");
         calc.HandleCommand("let x = 42.5");
         calc.HandleCommand("let y=42.5");
+        
         calc.HandleCommand("print x", output);
         std::string result1 = output.str();
         output.str("");
+        output.clear();
+        
         calc.HandleCommand("print y", output);
-        REQUIRE(result1 == output.str());
+        REQUIRE(output.str() == result1);
     }
 } 

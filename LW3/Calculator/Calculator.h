@@ -23,6 +23,9 @@ private:
     void HandleFnAssignment(std::istringstream& iss, const std::string& expression, const std::string& identifier);
     void HandleFnEvaluation(const std::string& expression, const std::string& identifier, size_t operatorPos);
     std::map<std::string, Variable>::const_iterator TryFindVariable(const std::string& identifier) const;
+    static void PrintValue(std::ostream& output, const std::string& name, double value);
+    void HandlePrintVars(std::ostream& output);
+    void HandlePrintFns(std::ostream& output);
 
     std::map<std::string, Variable> m_variables;
     std::map<std::string, Function> m_functions;

@@ -29,6 +29,14 @@ void Calculator::HandleCommand(const std::string& command, std::ostream& output)
         {
             HandlePrint(iss, output);
         }
+        else if (cmd == "printvars")
+        {
+            HandlePrintVars(output);
+        }
+        else if (cmd == "printfns")
+        {
+            HandlePrintFns(output);
+        }
         else
         {
             throw std::invalid_argument("Unknown command");
@@ -62,16 +70,11 @@ Variable& Calculator::GetOrCreateVariable(const std::string& identifier)
 
 void Calculator::HandleLet(std::istringstream& iss)
 {
-    std::string identifier, equals;
-    iss >> identifier;
+    std::string identifier;
+    std::getline(iss, identifier, '=');
+    identifier = RemoveSpaces(identifier);
 
     CheckIdentifierValidation(identifier);
-
-    iss >> equals;
-    if (equals != "=")
-    {
-        throw std::invalid_argument("Invalid usage");
-    }
 
     std::string value;
     iss >> value;
@@ -183,7 +186,7 @@ void Calculator::HandleFnEvaluation(const std::string& expression, const std::st
     }
     
     m_functions.emplace(
-        identifier, 
+        identifier,
         Function(identifier, left, right, expression[operatorPos])
     );
 }
@@ -196,7 +199,11 @@ void Calculator::CheckIdentifierValidation(const std::string& identifier) const
     }
 
     if (!std::all_of(identifier.begin(), identifier.end(), 
-        [](char c) { return std::isalnum(c) || c == '_'; }))
+        [](char c) { 
+            return std::isalpha(c) || 
+                   std::isdigit(c) || 
+                   c == '_'; 
+        }))
     {
         throw std::invalid_argument("Invalid usage");
     }
@@ -232,4 +239,38 @@ std::map<std::string, Variable>::const_iterator Calculator::TryFindVariable(cons
         throw std::invalid_argument("Name does not exist");
     }
     return it;
+}
+
+void Calculator::PrintValue(std::ostream& output, const std::string& name, double value)
+{
+    output << name << ":";
+    if (std::isnan(value))
+    {
+        output << "nan";
+    }
+    else
+    {
+        output << value;
+    }
+    output << "\n";
+}
+
+void Calculator::HandlePrintVars(std::ostream& output)
+{
+    output << std::fixed << std::setprecision(2);
+    
+    for (const auto& [name, var] : m_variables)
+    {
+        PrintValue(output, name, var.GetValue());
+    }
+}
+
+void Calculator::HandlePrintFns(std::ostream& output)
+{
+    output << std::fixed << std::setprecision(2);
+    
+    for (const auto& [name, func] : m_functions)
+    {
+        PrintValue(output, name, func.Evaluate(m_variables));
+    }
 }
