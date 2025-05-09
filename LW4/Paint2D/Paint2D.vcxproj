@@ -76,6 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,6 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +131,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="HandlerPaint2D.cpp" />
+    <ClCompile Include="LineSegment.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="ShapeProcessor.cpp" />
+    <ClCompile Include="ShapeStorage.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="ICanvas.cpp" />
+    <ClCompile Include="CanvasDrawable.cpp" />
+    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="SolidShape.cpp" />
     <ClCompile Include="Paint2D.cpp" />
+    <ClCompile Include="tests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Canvas.h" />
+    <ClInclude Include="Circle.h" />
+    <ClInclude Include="HandlerPaint2D.h" />
+    <ClInclude Include="LineSegment.h" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="ShapeProcessor.h" />
+    <ClInclude Include="ShapeStorage.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="ICanvas.h" />
+    <ClInclude Include="CanvasDrawable.h" />
+    <ClInclude Include="Shape.h" />
+    <ClInclude Include="SolidShape.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
