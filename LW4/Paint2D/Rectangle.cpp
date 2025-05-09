@@ -5,6 +5,8 @@ Rectangle::Rectangle(double x, double y, double width, double height, uint32_t o
     : SolidShape(outlineColor, fillColor)
     , m_leftTop(x, y)
     , m_rightBottom(x + width, y + height)
+    , m_width(width)
+    , m_height(height)
 {
 }
 
