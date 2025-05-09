@@ -1,10 +1,10 @@
 #pragma once
-#include "ICanvas.h"
+#include "Canvas.h"
 
 class CanvasDrawable
 {
 public:
-	void Draw(ICanvas canvas) 
+	void Draw(Canvas canvas) 
 	{
 
 	}
