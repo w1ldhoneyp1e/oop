@@ -10,12 +10,11 @@ private:
 	double m_width;
 	double m_height;
 public:
+	Rectangle(double x, double y, double width, double height, uint32_t outlineColor, uint32_t fillColor);
+
 	double GetArea() override;
 	double GetPerimeter() override;
 	std::string ToString() override;
-	uint32_t GetOutlineColor() override;
-
-	uint32_t GetFillColor() override;
 
 	Point GetLeftTop();
 	Point GetRightBottom();

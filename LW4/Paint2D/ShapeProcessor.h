@@ -4,7 +4,7 @@
 class ShapeProcessor
 {
 public:
-	Shape* FindShapeWithBiggestArea(std::vector<Shape*> shapes);
-	Shape* FindShapeWithSmallestPerimeter(std::vector<Shape*> shapes);
+	std::unique_ptr<Shape> FindShapeWithBiggestArea(std::vector<std::unique_ptr<Shape>>& shapes);
+	std::unique_ptr<Shape> FindShapeWithSmallestPerimeter(std::vector<std::unique_ptr<Shape>>& shapes);
 };
 

@@ -4,10 +4,14 @@
 
 class Shape
 {
+protected:
+	uint32_t m_outlineColor;
 public:
-	virtual double GetArea();
-	virtual double GetPerimeter();
+	explicit Shape(uint32_t outlineColor);
+
+	virtual double GetArea() = 0;
+	virtual double GetPerimeter() = 0;
 	virtual std::string ToString();
-	virtual uint32_t GetOutlineColor();
+	uint32_t GetOutlineColor();
 };
 

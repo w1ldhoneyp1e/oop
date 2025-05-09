@@ -4,12 +4,17 @@
 
 class LineSegment : public Shape
 {
+private:
+	Point m_startPoint;
+	Point m_endPoint;
+public:
+	LineSegment(Point startPoint, Point endPoint, uint32_t outlineColor);
+
 	double GetArea() override;
 	double GetPerimeter() override;
 	std::string ToString() override;
-	uint32_t GetOutlineColor() override;
 
-	CPoint GetStartPoint();
-	CPoint GetEndPoint();
+	Point GetStartPoint();
+	Point GetEndPoint();
 };
 
