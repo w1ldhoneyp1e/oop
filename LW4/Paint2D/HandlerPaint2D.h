@@ -7,14 +7,13 @@
 class HandlerPaint2D
 {
 public:
-	HandlerPaint2D(ShapeStorage& storage, ShapeProcessor& processor, Canvas& canvas);
+	HandlerPaint2D(ShapeStorage& storage, ShapeProcessor& processor);
 
-	void HandleCommand(std::istream& input, std::ostream& output);
+	void HandleCommand(std::string& command, std::ostream& output);
 
 private:
 	ShapeStorage& m_storage;
 	ShapeProcessor& m_processor;
-	Canvas& m_canvas;
 
 	void HandleAddCircle(std::istringstream& iss, std::ostream& output);
 	void HandleAddRectangle(std::istringstream& iss, std::ostream& output);

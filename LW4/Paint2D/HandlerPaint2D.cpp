@@ -8,57 +8,53 @@
 #include "Point.h"
 #include <memory>
 
-HandlerPaint2D::HandlerPaint2D(ShapeStorage& storage, ShapeProcessor& processor, Canvas& canvas)
-    : m_storage(storage), m_processor(processor), m_canvas(canvas)
+HandlerPaint2D::HandlerPaint2D(ShapeStorage& storage, ShapeProcessor& processor)
+    : m_storage(storage), m_processor(processor)
 {
 }
 
-void HandlerPaint2D::HandleCommand(std::istream& input, std::ostream& output)
+void HandlerPaint2D::HandleCommand(std::string& command, std::ostream& output)
 {
-    std::string command;
-    while (std::getline(input, command))
+    std::string cmd;
+    std::istringstream iss(command);
+    while (iss >> cmd)
     {
-        std::istringstream iss(command);
-        std::string cmd;
-        while (iss >> cmd)
+        try
         {
-            try
+            if (cmd == "circle")
             {
-                if (cmd == "circle")
-                {
-                    HandleAddCircle(iss, output);
-                }
-                else if (cmd == "rectangle")
-                {
-                    HandleAddRectangle(iss, output);
-                }
-                else if (cmd == "triangle")
-                {
-                    HandleAddTriangle(iss, output);
-                }
-                else if (cmd == "line")
-                {
-                    HandleAddLine(iss, output);
-                }
-                else if (command == "find biggest area")
-                {
-                    auto shape = m_processor.FindShapeWithBiggestArea(m_storage.GetShapes());
-                    output << shape->ToString();
-                }
-                else if (command == "find smallest perimeter")
-                {
-                    auto shape = m_processor.FindShapeWithSmallestPerimeter(m_storage.GetShapes());
-                    output << shape->ToString();
-                }
-                else if (command == "clear")
-                {
-                    m_storage.Clear();
-                }
+                HandleAddCircle(iss, output);
             }
-            catch (const std::exception& ex)
+            else if (cmd == "rectangle")
             {
-                output << "Error: " << ex.what() << std::endl;
+                HandleAddRectangle(iss, output);
             }
+            else if (cmd == "triangle")
+            {
+                HandleAddTriangle(iss, output);
+            }
+            else if (cmd == "line")
+            {
+                HandleAddLine(iss, output);
+            }
+            else if (command == "find biggest area")
+            {
+                auto shape = m_processor.FindShapeWithBiggestArea(m_storage.GetShapes());
+                output << shape->ToString();
+            }
+            else if (command == "find smallest perimeter")
+            {
+                auto shape = m_processor.FindShapeWithSmallestPerimeter(m_storage.GetShapes());
+                output << shape->ToString();
+            }
+            else if (command == "clear")
+            {
+                m_storage.Clear();
+            }
+        }
+        catch (const std::exception& ex)
+        {
+            output << "Error: " << ex.what() << std::endl;
         }
     }
 }
