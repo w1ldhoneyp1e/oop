@@ -8,6 +8,16 @@
 #include "Point.h"
 #include <memory>
 
+ShapeStorage& HandlerPaint2D::GetStorage()
+{
+    return m_storage;
+}
+
+ShapeProcessor& HandlerPaint2D::GetProcessor()
+{
+    return m_processor;
+}
+
 void HandlerPaint2D::HandleCommand(std::istream& input, std::ostream& output)
 {
     std::string command;

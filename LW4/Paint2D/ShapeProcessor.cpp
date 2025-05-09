@@ -1,25 +1,29 @@
 #include "ShapeProcessor.h"
+#include <algorithm>
 #include <memory>
 
-std::unique_ptr<Shape> ShapeProcessor::FindShapeWithBiggestArea(std::vector<std::unique_ptr<Shape>>& shapes)
+Shape* ShapeProcessor::FindShapeWithBiggestArea(const std::vector<std::unique_ptr<Shape>>& shapes)
 {
-    return std::max_element(
-        shapes.begin(), 
-        shapes.end(), 
-        [](const auto& a, const auto& b) { 
-            return a->GetArea() < b->GetArea(); 
+    if (shapes.empty()) return nullptr;
+    auto it = std::max_element(
+        shapes.begin(),
+        shapes.end(),
+        [](const auto& a, const auto& b) {
+            return a->GetArea() < b->GetArea();
         }
     );
+    return it->get();
 }
 
-std::unique_ptr<Shape> ShapeProcessor::FindShapeWithSmallestPerimeter(std::vector<std::unique_ptr<Shape>>& shapes)
+Shape* ShapeProcessor::FindShapeWithSmallestPerimeter(const std::vector<std::unique_ptr<Shape>>& shapes)
 {
-    return std::min_element(
-        shapes.begin(), 
-        shapes.end(), 
-        [](const auto& a, const auto& b) { 
-            return a->GetPerimeter() < b->GetPerimeter(); 
+    if (shapes.empty()) return nullptr;
+    auto it = std::min_element(
+        shapes.begin(),
+        shapes.end(),
+        [](const auto& a, const auto& b) {
+            return a->GetPerimeter() < b->GetPerimeter();
         }
     );
+    return it->get();
 }
-

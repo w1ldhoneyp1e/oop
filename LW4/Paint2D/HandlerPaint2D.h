@@ -11,6 +11,9 @@ private:
 public:
 	void HandleCommand(std::istream& input, std::ostream& output);
 
+	ShapeStorage& GetStorage();
+	ShapeProcessor& GetProcessor();
+
 private:
 	void HandleAddCircle(std::istringstream& iss, std::ostream& output);
 	void HandleAddRectangle(std::istringstream& iss, std::ostream& output);
