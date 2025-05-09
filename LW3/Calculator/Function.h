@@ -7,17 +7,15 @@ class Function
 {
 public:
     Function() = default;
-    Function(const std::string& name, const std::string& leftOperand);
-    Function(const std::string& name, const std::string& leftOperand, 
-             const std::string& rightOperand, char operation);
+    Function(const std::string& name, const Variable* leftOperand);
+    Function(const std::string& name, const Variable* leftOperand,
+             const Variable* rightOperand, char operation);
 
-    double Evaluate(const std::map<std::string, Variable>& variables) const;
-    const std::string& GetName() const { return m_name; }
+    double Evaluate() const;
 
 private:
     std::string m_name;
-    std::string m_leftOperand;
-    std::string m_rightOperand;
+    const Variable* m_leftOperand;
+    const Variable* m_rightOperand;
     char m_operation;
-    bool m_isSingleOperand;
 }; 

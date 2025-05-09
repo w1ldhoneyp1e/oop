@@ -9,23 +9,20 @@
 class Calculator
 {
 public:
-    void HandleCommand(const std::string& command, std::ostream& output = std::cout);
+    void DeclareVariable(const std::string& identifier);
+    void AssignVariable(const std::string& identifier, const std::string& value);
+    void DeclareFunction(const std::string& identifier, const std::string& expression);
+    void PrintIdentifier(const std::string& identifier, std::ostream& output);
+    void PrintAllVariables(std::ostream& output);
+    void PrintAllFunctions(std::ostream& output);
+    static std::string RemoveSpaces(const std::string& str);
 
 private:
-    void HandleVar(std::istringstream& iss);
-    void HandleLet(std::istringstream& iss);
-    void HandleFn(std::istringstream& iss);
-    void HandlePrint(std::istringstream& iss, std::ostream& output);
     void CheckIdentifierValidation(const std::string& identifier) const;
     void CheckIdentifierExistance(const std::string& identifier) const;
-    static std::string RemoveSpaces(const std::string& str);
     Variable& GetOrCreateVariable(const std::string& identifier);
-    void HandleFnAssignment(std::istringstream& iss, const std::string& expression, const std::string& identifier);
-    void HandleFnEvaluation(const std::string& expression, const std::string& identifier, size_t operatorPos);
     std::map<std::string, Variable>::const_iterator TryFindVariable(const std::string& identifier) const;
     static void PrintValue(std::ostream& output, const std::string& name, double value);
-    void HandlePrintVars(std::ostream& output);
-    void HandlePrintFns(std::ostream& output);
 
     std::map<std::string, Variable> m_variables;
     std::map<std::string, Function> m_functions;
