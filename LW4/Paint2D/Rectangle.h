@@ -15,6 +15,7 @@ public:
 	double GetArea() override;
 	double GetPerimeter() override;
 	std::string ToString() override;
+	void Draw(ICanvas& canvas) const override;
 
 	Point GetLeftTop();
 	Point GetRightBottom();

@@ -2,9 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include "HandlerPaint2D.h"
-#include "Canvas.h"
 #include "ShapeStorage.h"
 #include "ShapeProcessor.h"
+#include "Canvas.h"
 
 int main(int argc, char* argv[])
 {
@@ -52,7 +52,10 @@ int main(int argc, char* argv[])
 
         canvas.GetWindow().clear(sf::Color::White);
 
-        processor.Draw(storage.GetShapes(), canvas);
+        for (const auto& shape : storage.GetShapes())
+        {
+            shape->Draw(canvas);
+        }
 
         canvas.GetWindow().display();
     }

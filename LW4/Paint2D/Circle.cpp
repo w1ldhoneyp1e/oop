@@ -38,3 +38,9 @@ double Circle::GetRadius()
 {
     return m_radius;
 }
+
+void Circle::Draw(ICanvas& canvas) const 
+{
+    canvas.DrawCircle(m_center, m_radius, m_outlineColor);
+    canvas.FillCircle(m_center, m_radius, m_fillColor);
+}

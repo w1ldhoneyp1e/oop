@@ -53,3 +53,9 @@ double Rectangle::GetHeight()
 {
     return m_height;
 }
+
+void Rectangle::Draw(ICanvas& canvas) const
+{
+    canvas.DrawRectangle(m_leftTop, m_width, m_height, m_outlineColor);
+    canvas.FillRectangle(m_leftTop, m_width, m_height, m_fillColor);
+}

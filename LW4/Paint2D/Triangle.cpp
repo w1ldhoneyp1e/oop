@@ -53,3 +53,9 @@ Point Triangle::GetVertex3()
 {
     return m_vertex3;
 }
+
+void Triangle::Draw(ICanvas& canvas) const
+{
+    canvas.DrawTriangle(m_vertex1, m_vertex2, m_vertex3, m_outlineColor);
+    canvas.FillTriangle(m_vertex1, m_vertex2, m_vertex3, m_fillColor);
+}

@@ -2,7 +2,6 @@
 #include <ostream>
 #include "ShapeStorage.h"
 #include "ShapeProcessor.h"
-#include "Canvas.h"
 
 class HandlerPaint2D
 {

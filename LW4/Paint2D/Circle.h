@@ -1,6 +1,7 @@
 #pragma once
 #include "SolidShape.h"
 #include "Point.h"
+#include "ICanvas.h"
 
 class Circle : public SolidShape
 {
@@ -13,6 +14,7 @@ public:
 	double GetArea() override;
 	double GetPerimeter() override;
 	std::string ToString() override;
+	void Draw(ICanvas& canvas) const override;
 
 	Point GetCenter();
 	double GetRadius();

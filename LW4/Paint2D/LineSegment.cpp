@@ -36,3 +36,8 @@ Point LineSegment::GetEndPoint()
 {
     return m_endPoint;
 }
+
+void LineSegment::Draw(ICanvas& canvas) const
+{
+    canvas.DrawLine(m_startPoint, m_endPoint, m_outlineColor);
+}
