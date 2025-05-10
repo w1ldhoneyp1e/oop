@@ -162,7 +162,25 @@ TEST_CASE("Error handling")
         REQUIRE(storage.GetShapes().empty());
     }
 
-    SECTION("Rectangle with zero dimensions")
+    SECTION("Circle with zero radius")
+    {
+        std::string command = "circle 0 0 0 123456 654321";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(output.str().find("Radius must be positive") != std::string::npos);
+        REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Circle with missing parameters")
+    {
+        std::string command = "circle 0 0 10 123456";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(output.str().find("Invalid parameters") != std::string::npos);
+        REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Rectangle with zero width")
     {
         std::string command = "rectangle 0 0 0 20 111111 222222";
         handler.HandleCommand(command, output);
@@ -170,14 +188,133 @@ TEST_CASE("Error handling")
         REQUIRE(output.str().find("Width and height must be positive") != std::string::npos);
         REQUIRE(storage.GetShapes().empty());
     }
-
-    SECTION("Invalid command format")
+    
+    SECTION("Rectangle with zero height")
     {
-        std::string command = "circle 0 0 10";
+        std::string command = "rectangle 0 0 10 0 111111 222222";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(output.str().find("Width and height must be positive") != std::string::npos);
+        REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Rectangle with negative width")
+    {
+        std::string command = "rectangle 0 0 -10 20 111111 222222";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(output.str().find("Width and height must be positive") != std::string::npos);
+        REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Rectangle with negative height")
+    {
+        std::string command = "rectangle 0 0 10 -20 111111 222222";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(output.str().find("Width and height must be positive") != std::string::npos);
+        REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Rectangle with missing parameters")
+    {
+        std::string command = "rectangle 0 0 10 20 111111";
         handler.HandleCommand(command, output);
         
         REQUIRE(output.str().find("Invalid parameters") != std::string::npos);
         REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Triangle with collinear points")
+    {
+        std::string command = "triangle 0 0 5 5 10 10 333333 444444";
+        handler.HandleCommand(command, output);
+    }
+    
+    SECTION("Triangle with missing parameters")
+    {
+        std::string command = "triangle 0 0 1 1 2 2 333333";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(output.str().find("Invalid parameters") != std::string::npos);
+        REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Line with coincident points")
+    {
+        std::string command = "line 10 10 10 10 555555";
+        handler.HandleCommand(command, output);
+    }
+    
+    SECTION("Line with missing parameters")
+    {
+        std::string command = "line 0 0 1 1";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(output.str().find("Invalid parameters") != std::string::npos);
+        REQUIRE(storage.GetShapes().empty());
+    }
+    
+    SECTION("Unknown command")
+    {
+        std::string command = "unknown_command 1 2 3";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(storage.GetShapes().empty());
+    }
+
+    SECTION("Circle with invalid outline color format")
+    {
+        std::string command = "circle 0 0 10 RRRREF 123456";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(storage.GetShapes().empty());
+    }
+
+    SECTION("Circle with invalid fill color format")
+    {
+        std::string command = "circle 0 0 10 123456 -1";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(storage.GetShapes().empty());
+    }
+
+    SECTION("Rectangle with invalid outline color")
+    {
+        std::string command = "rectangle 0 0 10 20 INVALID 222222";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(storage.GetShapes().empty());
+    }
+
+    SECTION("Rectangle with invalid fill color")
+    {
+        std::string command = "rectangle 0 0 10 20 111111 -1";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(storage.GetShapes().empty());
+    }
+
+    SECTION("Triangle with invalid outline color")
+    {
+        std::string command = "triangle 0 0 1 1 2 2 ???? 444444";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(storage.GetShapes().empty());
+    }
+
+    SECTION("Line with invalid color")
+    {
+        std::string command = "line 0 0 1 1 OutOfRange";
+        handler.HandleCommand(command, output);
+        
+        REQUIRE(storage.GetShapes().empty());
+    }
+
+    SECTION("Color out of range")
+    {
+        std::string command = "circle 0 0 10 4294967295 123456";
+        handler.HandleCommand(command, output);
     }
 }
 

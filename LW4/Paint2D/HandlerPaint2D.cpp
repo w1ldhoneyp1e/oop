@@ -62,45 +62,91 @@ void HandlerPaint2D::HandleCommand(std::string& command, std::ostream& output)
 void HandlerPaint2D::HandleAddCircle(std::istringstream& iss, std::ostream& output)
 {
     double x, y, radius;
-    uint32_t outlineColor, fillColor;
-    if (!(iss >> x >> y >> radius >> outlineColor >> fillColor)) {
+    std::string outlineColorStr, fillColorStr;
+    
+    if (!(iss >> x >> y >> radius >> outlineColorStr >> fillColorStr)) {
         throw std::invalid_argument("Invalid parameters for circle");
     }
+    
     if (radius <= 0) {
         throw std::invalid_argument("Radius must be positive");
     }
+    
+    if (!IsValidColor(outlineColorStr) || !IsValidColor(fillColorStr)) {
+        throw std::invalid_argument("Invalid color format");
+    }
+    
+    uint32_t outlineColor = std::stoul(outlineColorStr, nullptr, 16);
+    uint32_t fillColor = std::stoul(fillColorStr, nullptr, 16);
+    
     m_storage.AddShape(std::make_unique<Circle>(x, y, radius, outlineColor, fillColor));
 }
 
 void HandlerPaint2D::HandleAddRectangle(std::istringstream& iss, std::ostream& output)
 {
     double x, y, width, height;
-    uint32_t outlineColor, fillColor;
-    if (!(iss >> x >> y >> width >> height >> outlineColor >> fillColor)) {
+    std::string outlineColorStr, fillColorStr;
+    
+    if (!(iss >> x >> y >> width >> height >> outlineColorStr >> fillColorStr)) {
         throw std::invalid_argument("Invalid parameters for rectangle");
     }
+    
     if (width <= 0 || height <= 0) {
         throw std::invalid_argument("Width and height must be positive");
     }
+    
+    if (!IsValidColor(outlineColorStr) || !IsValidColor(fillColorStr)) {
+        throw std::invalid_argument("Invalid color format");
+    }
+    
+    uint32_t outlineColor = std::stoul(outlineColorStr, nullptr, 16);
+    uint32_t fillColor = std::stoul(fillColorStr, nullptr, 16);
+    
     m_storage.AddShape(std::make_unique<Rectangle>(x, y, width, height, outlineColor, fillColor));
 }
 
 void HandlerPaint2D::HandleAddTriangle(std::istringstream& iss, std::ostream& output)
 {
     double x1, y1, x2, y2, x3, y3;
-    uint32_t outlineColor, fillColor;
-    if (!(iss >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> outlineColor >> fillColor)) {
+    std::string outlineColorStr, fillColorStr;
+    if (!(iss >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> outlineColorStr >> fillColorStr)) {
         throw std::invalid_argument("Invalid parameters for triangle");
     }
+    if (!IsValidColor(outlineColorStr) || !IsValidColor(fillColorStr)) {
+        throw std::invalid_argument("Invalid color format");
+    }
+    uint32_t outlineColor = std::stoul(outlineColorStr, nullptr, 16);
+    uint32_t fillColor = std::stoul(fillColorStr, nullptr, 16);
     m_storage.AddShape(std::make_unique<Triangle>(x1, y1, x2, y2, x3, y3, outlineColor, fillColor));
 }
 
 void HandlerPaint2D::HandleAddLine(std::istringstream& iss, std::ostream& output)
 {
     double x1, y1, x2, y2;
-    uint32_t outlineColor;
-    if (!(iss >> x1 >> y1 >> x2 >> y2 >> outlineColor)) {
+    std::string outlineColorStr;
+    if (!(iss >> x1 >> y1 >> x2 >> y2 >> outlineColorStr)) {
         throw std::invalid_argument("Invalid parameters for line");
     }
+    if (!IsValidColor(outlineColorStr)) {
+        throw std::invalid_argument("Invalid color format");
+    }
+    uint32_t outlineColor = std::stoul(outlineColorStr, nullptr, 16);
     m_storage.AddShape(std::make_unique<LineSegment>(Point(x1, y1), Point(x2, y2), outlineColor));
+}
+
+bool HandlerPaint2D::IsValidColor(const std::string& colorStr)
+{
+    try {
+        for (char c : colorStr) {
+            if (!isxdigit(c)) {
+                return false;
+            }
+        }
+        
+        uint32_t color = std::stoul(colorStr, nullptr, 16);
+        return color <= 0xFFFFFF;
+    }
+    catch (std::exception&) {
+        return false;
+    }
 }

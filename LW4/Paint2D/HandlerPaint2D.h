@@ -18,5 +18,6 @@ private:
 	void HandleAddRectangle(std::istringstream& iss, std::ostream& output);
 	void HandleAddTriangle(std::istringstream& iss, std::ostream& output);
 	void HandleAddLine(std::istringstream& iss, std::ostream& output);
+	bool IsValidColor(const std::string& colorStr);
 };
 
