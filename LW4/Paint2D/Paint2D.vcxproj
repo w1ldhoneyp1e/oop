@@ -151,9 +151,8 @@
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="ShapeProcessor.cpp" />
     <ClCompile Include="ShapeStorage.cpp" />
+    <ClCompile Include="tests.cpp" />
     <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="ICanvas.cpp" />
-    <ClCompile Include="CanvasDrawable.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SolidShape.cpp" />
     <ClCompile Include="Paint2D.cpp" />

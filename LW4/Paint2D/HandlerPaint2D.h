@@ -1,5 +1,8 @@
 #pragma once
 #include <ostream>
+#include <functional>
+#include <map>
+#include <string>
 #include "ShapeStorage.h"
 #include "ShapeProcessor.h"
 
@@ -13,11 +16,16 @@ public:
 private:
 	ShapeStorage& m_storage;
 	ShapeProcessor& m_processor;
+	
+	using CommandHandler = std::function<void(std::istringstream&, std::ostream&)>;
+	std::map<std::string, CommandHandler> m_commandHandlers;
 
 	void HandleAddCircle(std::istringstream& iss, std::ostream& output);
 	void HandleAddRectangle(std::istringstream& iss, std::ostream& output);
 	void HandleAddTriangle(std::istringstream& iss, std::ostream& output);
 	void HandleAddLine(std::istringstream& iss, std::ostream& output);
-	bool IsValidColor(const std::string& colorStr);
+	void HandleBiggestArea(std::istringstream& iss, std::ostream& output);
+	void HandleSmallestPerimeter(std::istringstream& iss, std::ostream& output);
+	void HandleClear(std::istringstream& iss, std::ostream& output);
 };
 

@@ -330,13 +330,17 @@ TEST_CASE("Shape drawing")
         Circle circle(100, 200, 50, 0xFF0000, 0x00FF00);
         circle.Draw(mockCanvas.get());
         
-        Verify(Method(mockCanvas, DrawCircle).Matching([](Point p, double r, std::uint32_t c) {
-            return p.GetX() == 100 && p.GetY() == 200 && r == 50 && c == 0xFF0000;
-        })).Once();
+        Verify(Method(mockCanvas, DrawCircle).Matching(
+            [](Point p, double r, std::uint32_t c) {
+                return p.GetX() == 100 && p.GetY() == 200 && r == 50 && c == 0xFF0000;
+            }
+        )).Once();
         
-        Verify(Method(mockCanvas, FillCircle).Matching([](Point p, double r, std::uint32_t c) {
-            return p.GetX() == 100 && p.GetY() == 200 && r == 50 && c == 0x00FF00;
-        })).Once();
+        Verify(Method(mockCanvas, FillCircle).Matching(
+            [](Point p, double r, std::uint32_t c) {
+                return p.GetX() == 100 && p.GetY() == 200 && r == 50 && c == 0x00FF00;
+            }
+        )).Once();
     }
     
     SECTION("Rectangle drawing")
@@ -348,13 +352,17 @@ TEST_CASE("Shape drawing")
         Rectangle rect(10, 20, 30, 40, 0x112233, 0x445566);
         rect.Draw(mockCanvas.get());
         
-        Verify(Method(mockCanvas, DrawRectangle).Matching([](Point p, double w, double h, std::uint32_t c) {
-            return p.GetX() == 10 && p.GetY() == 20 && w == 30 && h == 40 && c == 0x112233;
-        })).Once();
+        Verify(Method(mockCanvas, DrawRectangle).Matching(
+            [](Point p, double w, double h, std::uint32_t c) {
+                return p.GetX() == 10 && p.GetY() == 20 && w == 30 && h == 40 && c == 0x112233;
+            }
+        )).Once();
         
-        Verify(Method(mockCanvas, FillRectangle).Matching([](Point p, double w, double h, std::uint32_t c) {
-            return p.GetX() == 10 && p.GetY() == 20 && w == 30 && h == 40 && c == 0x445566;
-        })).Once();
+        Verify(Method(mockCanvas, FillRectangle).Matching(
+            [](Point p, double w, double h, std::uint32_t c) {
+                return p.GetX() == 10 && p.GetY() == 20 && w == 30 && h == 40 && c == 0x445566;
+            }
+        )).Once();
     }
     
     SECTION("LineSegment drawing")
@@ -365,11 +373,13 @@ TEST_CASE("Shape drawing")
         LineSegment line(Point(10, 20), Point(30, 40), 0xABCDEF);
         line.Draw(mockCanvas.get());
         
-        Verify(Method(mockCanvas, DrawLine).Matching([](Point from, Point to, std::uint32_t c) {
-            return from.GetX() == 10 && from.GetY() == 20 && 
-                   to.GetX() == 30 && to.GetY() == 40 && 
-                   c == 0xABCDEF;
-        })).Once();
+        Verify(Method(mockCanvas, DrawLine).Matching(
+            [](Point from, Point to, std::uint32_t c) {
+                return from.GetX() == 10 && from.GetY() == 20 && 
+                    to.GetX() == 30 && to.GetY() == 40 && 
+                    c == 0xABCDEF;
+            }
+        )).Once();
     }
     
     SECTION("Triangle drawing")

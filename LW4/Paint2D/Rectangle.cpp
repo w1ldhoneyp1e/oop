@@ -1,5 +1,6 @@
 #include "Rectangle.h"
 #include <format>
+#include <stdexcept>
 
 Rectangle::Rectangle(double x, double y, double width, double height, uint32_t outlineColor, uint32_t fillColor)
     : SolidShape(outlineColor, fillColor)
@@ -8,6 +9,9 @@ Rectangle::Rectangle(double x, double y, double width, double height, uint32_t o
     , m_width(width)
     , m_height(height)
 {
+    if (width <= 0 || height <= 0) {
+        throw std::invalid_argument("Width and height must be positive");
+    }
 }
 
 double Rectangle::GetArea()
@@ -56,6 +60,6 @@ double Rectangle::GetHeight()
 
 void Rectangle::Draw(ICanvas& canvas) const
 {
-    canvas.DrawRectangle(m_leftTop, m_width, m_height, m_outlineColor);
-    canvas.FillRectangle(m_leftTop, m_width, m_height, m_fillColor);
+    canvas.DrawRectangle(m_leftTop, m_width, m_height, GetOutlineColor());
+    canvas.FillRectangle(m_leftTop, m_width, m_height, GetFillColor());
 }

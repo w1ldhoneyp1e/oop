@@ -1,12 +1,16 @@
 #include "Circle.h"
 #include <format>
 #include <numbers>
+#include <stdexcept>
 
-Circle::Circle(double x, double y, double radius, uint32_t outlineColor, uint32_t fillColor)
+Circle::Circle(double x, double y, double radius, uint32_t outlineColor, uint32_t fillColor) // ��������� �������� ������ � ��������
     : SolidShape(outlineColor, fillColor)
     , m_center(x, y)
     , m_radius(radius)
 {
+    if (radius <= 0) {
+        throw std::invalid_argument("Radius must be positive");
+    }
 }
 
 double Circle::GetArea()
@@ -41,6 +45,6 @@ double Circle::GetRadius()
 
 void Circle::Draw(ICanvas& canvas) const 
 {
-    canvas.DrawCircle(m_center, m_radius, m_outlineColor);
-    canvas.FillCircle(m_center, m_radius, m_fillColor);
+    canvas.DrawCircle(m_center, m_radius, GetOutlineColor());
+    canvas.FillCircle(m_center, m_radius, GetFillColor());
 }

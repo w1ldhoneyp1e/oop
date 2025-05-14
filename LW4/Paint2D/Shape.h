@@ -14,6 +14,8 @@ public:
 	virtual double GetArea() = 0;
 	virtual double GetPerimeter() = 0;
 	virtual std::string ToString();
-	uint32_t GetOutlineColor();
+	uint32_t GetOutlineColor() const;
+	
+	static bool IsValidColor(uint32_t color);
 };
 
