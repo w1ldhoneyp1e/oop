@@ -14,7 +14,7 @@ Variable& Calculator::GetOrCreateVariable(const std::string& identifier)
     return m_variables.at(identifier);
 }
 
-void Calculator::CheckIdentifierValidation(const std::string& identifier) const
+void Calculator::CheckIdentifierName(const std::string& identifier) const
 {
     if (identifier.empty() || std::isdigit(identifier[0]))
     {
@@ -79,14 +79,14 @@ void Calculator::PrintValue(std::ostream& output, const std::string& name, doubl
 
 void Calculator::DeclareVariable(const std::string& identifier)
 {
-    CheckIdentifierValidation(identifier);
+    CheckIdentifierName(identifier); // CheckIdName
     CheckIdentifierExistance(identifier);
     m_variables.emplace(identifier, Variable(identifier));
 }
 
 void Calculator::AssignVariable(const std::string& identifier, const std::string& value)
 {
-    CheckIdentifierValidation(identifier);
+    CheckIdentifierName(identifier);
 
     try
     {
@@ -95,7 +95,7 @@ void Calculator::AssignVariable(const std::string& identifier, const std::string
     }
     catch (const std::invalid_argument&)
     {
-        CheckIdentifierValidation(value);
+        CheckIdentifierName(value);
         auto it = TryFindVariable(value);
         GetOrCreateVariable(identifier).SetValue(it->second.GetValue());
     }
@@ -103,7 +103,7 @@ void Calculator::AssignVariable(const std::string& identifier, const std::string
 
 void Calculator::DeclareFunction(const std::string& identifier, const std::string& expression)
 {
-    CheckIdentifierValidation(identifier);
+    CheckIdentifierName(identifier);
     CheckIdentifierExistance(identifier);
 
     std::string cleanExpression = RemoveSpaces(expression);
@@ -111,21 +111,21 @@ void Calculator::DeclareFunction(const std::string& identifier, const std::strin
 
     if (operatorPos == std::string::npos)
     {
-        CheckIdentifierValidation(cleanExpression);
+        CheckIdentifierName(cleanExpression);
         const auto variable = m_variables.find(cleanExpression);
         if (variable == m_variables.end())
         {
             throw std::invalid_argument("Name does not exist");
         }
-        m_functions.emplace(identifier, Function(identifier, &variable->second));
+        m_functions.emplace(identifier, Function(identifier, variable->second));
     }
     else
     {
         std::string left = cleanExpression.substr(0, operatorPos);
         std::string right = cleanExpression.substr(operatorPos + 1);
 
-        CheckIdentifierValidation(left);
-        CheckIdentifierValidation(right);
+        CheckIdentifierName(left);
+        CheckIdentifierName(right);
         const auto leftOp = m_variables.find(left);
         const auto rightOp = m_variables.find(right);
         if (leftOp == m_variables.end() || rightOp == m_variables.end())
@@ -135,7 +135,7 @@ void Calculator::DeclareFunction(const std::string& identifier, const std::strin
 
         m_functions.emplace(
             identifier,
-            Function(identifier, &leftOp->second, &rightOp->second, cleanExpression[operatorPos])
+            Function(identifier, leftOp->second, rightOp->second, cleanExpression[operatorPos])
         );
     }
 }

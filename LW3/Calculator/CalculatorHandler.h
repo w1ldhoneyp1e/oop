@@ -1,12 +1,14 @@
 #pragma once
 #include <string>
 #include <sstream>
+#include <map>
+#include <functional>
 #include "Calculator.h"
 
-class HandleCalculator
+class CalculatorHandler
 {
 public:
-    explicit HandleCalculator(Calculator& calculator);
+    explicit CalculatorHandler(Calculator& calculator);
     void HandleCommand(const std::string& command, std::ostream& output = std::cout);
 
 private:
@@ -18,5 +20,8 @@ private:
     void HandlePrintFns(std::ostream& output);
 
     Calculator& m_calculator;
+    
+    using CommandHandler = std::function<void(std::istringstream&, std::ostream&)>;
+    std::map<std::string, CommandHandler> m_commandHandlers;
 };
 

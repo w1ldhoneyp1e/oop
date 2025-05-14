@@ -18,7 +18,7 @@ public:
     static std::string RemoveSpaces(const std::string& str);
 
 private:
-    void CheckIdentifierValidation(const std::string& identifier) const;
+    void CheckIdentifierName(const std::string& identifier) const;
     void CheckIdentifierExistance(const std::string& identifier) const;
     Variable& GetOrCreateVariable(const std::string& identifier);
     std::map<std::string, Variable>::const_iterator TryFindVariable(const std::string& identifier) const;
