@@ -1,13 +1,13 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_all.hpp>
 #include "Calculator.h"
-#include "HandleCalculator.h"
+#include "CalculatorHandler.h"
 #include <sstream>
 
 TEST_CASE("Variable declaration")
 {
     Calculator calc;
-    HandleCalculator handler(calc);
+    CalculatorHandler handler(calc);
     std::stringstream output;
 
     SECTION("Can declare variable")
@@ -46,7 +46,7 @@ TEST_CASE("Variable declaration")
 TEST_CASE("Function declaration")
 {
     Calculator calc;
-    HandleCalculator handler(calc);
+    CalculatorHandler handler(calc);
     std::stringstream output;
 
     SECTION("Can declare function with single variable")
@@ -168,7 +168,7 @@ TEST_CASE("Function declaration")
 TEST_CASE("Print commands")
 {
     Calculator calc;
-    HandleCalculator handler(calc);
+    CalculatorHandler handler(calc);
     std::stringstream output;
 
     SECTION("Print undefined variable")
@@ -201,7 +201,7 @@ TEST_CASE("Print commands")
 TEST_CASE("Print all variables and functions")
 {
     Calculator calc;
-    HandleCalculator handler(calc);
+    CalculatorHandler handler(calc);
     std::stringstream output;
 
     SECTION("Empty lists print nothing")
@@ -241,7 +241,7 @@ TEST_CASE("Print all variables and functions")
 TEST_CASE("Let command")
 {
     Calculator calc;
-    HandleCalculator handler(calc);
+    CalculatorHandler handler(calc);
     std::stringstream output;
 
     SECTION("Can initialize variable with number")
