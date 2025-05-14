@@ -1,16 +1,16 @@
 #include "Function.h"
 #include <cmath>
 
-Function::Function(const std::string& name, const Variable* leftOperand)
+Function::Function(const std::string& name, const Variable& leftOperand)
     : m_name(name)
     , m_leftOperand(leftOperand)
-    , m_rightOperand(nullptr)
+    , m_rightOperand(std::nullopt)
     , m_operation('\0')
 {
 }
 
-Function::Function(const std::string& name, const Variable* leftOperand,
-                  const Variable* rightOperand, char operation)
+Function::Function(const std::string& name, const Variable& leftOperand,
+                  const Variable& rightOperand, char operation)
     : m_name(name)
     , m_leftOperand(leftOperand)
     , m_rightOperand(rightOperand)
@@ -18,15 +18,15 @@ Function::Function(const std::string& name, const Variable* leftOperand,
 {
 }
 
-double Function::Evaluate() const // Хранить вместо названий ссылки на left и right. Поправить схему после изменений DONE
+double Function::Evaluate() const
 {
-    if (m_rightOperand == nullptr)
+    if (!m_rightOperand.has_value())
     {
-        return m_leftOperand->GetValue();
+        return m_leftOperand.GetValue();
     }
 
-    double left = m_leftOperand->GetValue();
-    double right = m_rightOperand->GetValue();
+    double left = m_leftOperand.GetValue();
+    double right = m_rightOperand.value().get().GetValue();
 
     if (std::isnan(left) || std::isnan(right)) 
     {
