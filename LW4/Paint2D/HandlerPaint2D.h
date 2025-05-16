@@ -20,12 +20,12 @@ private:
 	using CommandHandler = std::function<void(std::istringstream&, std::ostream&)>;
 	std::map<std::string, CommandHandler> m_commandHandlers;
 
-	void HandleAddCircle(std::istringstream& iss, std::ostream& output);
-	void HandleAddRectangle(std::istringstream& iss, std::ostream& output);
-	void HandleAddTriangle(std::istringstream& iss, std::ostream& output);
-	void HandleAddLine(std::istringstream& iss, std::ostream& output);
+	void HandleAddCircle(std::istringstream& iss);
+	void HandleAddRectangle(std::istringstream& iss);
+	void HandleAddTriangle(std::istringstream& iss);
+	void HandleAddLine(std::istringstream& iss);
 	void HandleBiggestArea(std::istringstream& iss, std::ostream& output);
 	void HandleSmallestPerimeter(std::istringstream& iss, std::ostream& output);
-	void HandleClear(std::istringstream& iss, std::ostream& output);
+	void HandleClear(std::istringstream& iss);
 };
 

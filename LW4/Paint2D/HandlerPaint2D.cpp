@@ -12,13 +12,13 @@ HandlerPaint2D::HandlerPaint2D(ShapeStorage& storage, ShapeProcessor& processor)
     : m_storage(storage), m_processor(processor)
 {
     m_commandHandlers = {
-        { "circle", [this](std::istringstream& iss, std::ostream& output) { HandleAddCircle(iss, output); } },
-        { "rectangle", [this](std::istringstream& iss, std::ostream& output) { HandleAddRectangle(iss, output); } },
-        { "triangle", [this](std::istringstream& iss, std::ostream& output) { HandleAddTriangle(iss, output); } },
-        { "line", [this](std::istringstream& iss, std::ostream& output) { HandleAddLine(iss, output); } },
+        { "circle", [this](std::istringstream& iss, std::ostream& output) { HandleAddCircle(iss); } },
+        { "rectangle", [this](std::istringstream& iss, std::ostream& output) { HandleAddRectangle(iss); } },
+        { "triangle", [this](std::istringstream& iss, std::ostream& output) { HandleAddTriangle(iss); } },
+        { "line", [this](std::istringstream& iss, std::ostream& output) { HandleAddLine(iss); } },
         { "find biggest area", [this](std::istringstream& iss, std::ostream& output) { HandleBiggestArea(iss, output); } },
         { "find smallest perimeter", [this](std::istringstream& iss, std::ostream& output) { HandleSmallestPerimeter(iss, output); } },
-        { "clear", [this](std::istringstream& iss, std::ostream& output) { HandleClear(iss, output); } }
+        { "clear", [this](std::istringstream& iss, std::ostream& output) { HandleClear(iss); } }
     };
 }
 
@@ -79,12 +79,12 @@ void HandlerPaint2D::HandleSmallestPerimeter(std::istringstream& iss, std::ostre
     }
 }
 
-void HandlerPaint2D::HandleClear(std::istringstream& iss, std::ostream& output)
+void HandlerPaint2D::HandleClear(std::istringstream& iss)
 {
     m_storage.Clear();
 }
 
-void HandlerPaint2D::HandleAddCircle(std::istringstream& iss, std::ostream& output)
+void HandlerPaint2D::HandleAddCircle(std::istringstream& iss)
 {
     double x, y, radius;
     std::string outlineColorStr, fillColorStr;
@@ -104,7 +104,7 @@ void HandlerPaint2D::HandleAddCircle(std::istringstream& iss, std::ostream& outp
     }
 }
 
-void HandlerPaint2D::HandleAddRectangle(std::istringstream& iss, std::ostream& output)
+void HandlerPaint2D::HandleAddRectangle(std::istringstream& iss)
 {
     double x, y, width, height;
     std::string outlineColorStr, fillColorStr;
@@ -128,7 +128,7 @@ void HandlerPaint2D::HandleAddRectangle(std::istringstream& iss, std::ostream& o
     }
 }
 
-void HandlerPaint2D::HandleAddTriangle(std::istringstream& iss, std::ostream& output)
+void HandlerPaint2D::HandleAddTriangle(std::istringstream& iss)
 {
     double x1, y1, x2, y2, x3, y3;
     std::string outlineColorStr, fillColorStr;
@@ -147,7 +147,7 @@ void HandlerPaint2D::HandleAddTriangle(std::istringstream& iss, std::ostream& ou
     }
 }
 
-void HandlerPaint2D::HandleAddLine(std::istringstream& iss, std::ostream& output)
+void HandlerPaint2D::HandleAddLine(std::istringstream& iss)
 {
     double x1, y1, x2, y2;
     std::string outlineColorStr;
