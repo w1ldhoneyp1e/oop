@@ -57,7 +57,7 @@ TEST_CASE("Constructors and validation")
     
     SECTION("Constructor with timestamp out of range")
     {
-        REQUIRE_THROWS_AS(CDate(CDate::MAX_TIMESTAMP + 1), std::out_of_range);
+        REQUIRE_THROWS_AS(CDate(MAX_TIMESTAMP + 1), std::out_of_range);
     }
 }
 
@@ -302,11 +302,6 @@ TEST_CASE("Input/Output")
         REQUIRE(oss.str() == "15.03.2023");
     }
 
-    SECTION("Output invalid date")
-    {
-        REQUIRE_THROWS_AS(CDate(32, Month::JANUARY, 2023), std::invalid_argument);
-    }
-
     SECTION("Input valid date")
     {
         std::istringstream iss("15.03.2023");
@@ -321,13 +316,13 @@ TEST_CASE("Input/Output")
     {
         std::istringstream iss("15-03-2023");
         CDate date;
-        REQUIRE_THROWS(iss >> date);
+        REQUIRE_FALSE(iss >> date);
     }
     
     SECTION("Input invalid date")
     {
         std::istringstream iss("31.02.2023");
         CDate date;
-        REQUIRE_THROWS(iss >> date);
+        REQUIRE_FALSE(iss >> date);
     }
 }

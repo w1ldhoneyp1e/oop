@@ -3,12 +3,15 @@
 #include <iomanip>
 #include <stdexcept>
 
-bool CDate::IsLeapYear(uint64_t year)
+const uint64_t MIN_TIMESTAMP = 0;
+const uint64_t MAX_TIMESTAMP = 2932896;
+
+bool IsLeapYear(uint64_t year)
 {
 	return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-uint64_t CDate::LastDayOfMonth(uint16_t year, Month month)
+uint64_t LastDayOfMonth(uint16_t year, Month month)
 {
 	static const uint64_t daysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	uint64_t monthIdx = static_cast<uint64_t>(month);
@@ -22,7 +25,7 @@ uint64_t CDate::LastDayOfMonth(uint16_t year, Month month)
 	return daysInMonth[monthIdx];
 }
 
-bool CDate::IsValidDate(uint8_t day, Month month, uint16_t year)
+bool IsValidDate(uint8_t day, Month month, uint16_t year)
 {
 	uint8_t monthIdx = static_cast<uint8_t>(month);
 	
@@ -39,10 +42,19 @@ bool CDate::IsValidDate(uint8_t day, Month month, uint16_t year)
 	return true;
 }
 
+bool IsValidDate(const DateTuple& date)
+{
+	return IsValidDate(std::get<0>(date), std::get<1>(date), std::get<2>(date));
+}
+
 // Howard Hinnant
 // https://howardhinnant.github.io/date_algorithms.html#days_from_civil
-uint64_t CDate::DaysFromCivil(uint8_t day, Month month, uint16_t year)
+uint64_t DaysFromCivil(const DateTuple& date)
 {
+	uint8_t day = std::get<0>(date);
+	Month month = std::get<1>(date);
+	uint16_t year = std::get<2>(date);
+	
 	uint8_t m = static_cast<uint8_t>(month);
 	int y = static_cast<int>(year);
 	y -= (m <= 2);
@@ -53,7 +65,7 @@ uint64_t CDate::DaysFromCivil(uint8_t day, Month month, uint16_t year)
 	return era * 146097 + doe - 719468;
 }
 
-void CDate::CivilFromDays(uint64_t days, uint8_t& day, Month& month, uint16_t& year)
+DateTuple CivilFromDays(uint64_t days)
 {
 	days += 719468;
 	const int era = static_cast<int>(days / 146097);
@@ -62,9 +74,11 @@ void CDate::CivilFromDays(uint64_t days, uint8_t& day, Month& month, uint16_t& y
 	const int y = static_cast<int>(yoe) + era * 400;
 	const uint64_t doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
 	const uint64_t mp = (5 * doy + 2) / 153;
-	day = static_cast<uint8_t>(doy - (153 * mp + 2) / 5 + 1);
-	month = static_cast<Month>((mp < 10 ? mp + 3 : mp - 9));
-	year = static_cast<uint16_t>(y + (static_cast<uint64_t>(month) <= 2));
+	uint8_t day = static_cast<uint8_t>(doy - (153 * mp + 2) / 5 + 1);
+	Month month = static_cast<Month>((mp < 10 ? mp + 3 : mp - 9));
+	uint16_t year = static_cast<uint16_t>(y + (static_cast<uint64_t>(month) <= 2));
+	
+	return std::make_tuple(day, month, year);
 }
 
 CDate::CDate(uint8_t day, Month month, uint16_t year)
@@ -74,7 +88,17 @@ CDate::CDate(uint8_t day, Month month, uint16_t year)
 		throw std::invalid_argument("Invalid date");
 	}
 	
-	m_timestamp = DaysFromCivil(day, month, year);
+	m_timestamp = DaysFromCivil(std::make_tuple(day, month, year));
+}
+
+CDate::CDate(const DateTuple& date)
+{
+	if (!IsValidDate(date))
+	{
+		throw std::invalid_argument("Invalid date");
+	}
+	
+	m_timestamp = DaysFromCivil(date);
 }
 
 CDate::CDate(uint64_t timestamp) : m_timestamp(timestamp)
@@ -91,29 +115,22 @@ CDate::CDate() : m_timestamp(0)
 
 uint8_t CDate::GetDay() const
 {
-	uint8_t day;
-	Month month;
-	uint16_t year;
-	CivilFromDays(m_timestamp, day, month, year);
-	return day;
+	return std::get<0>(CivilFromDays(m_timestamp));
 }
 
 Month CDate::GetMonth() const
 {
-	uint8_t day;
-	Month month;
-	uint16_t year;
-	CivilFromDays(m_timestamp, day, month, year);
-	return month;
+	return std::get<1>(CivilFromDays(m_timestamp));
 }
 
 uint16_t CDate::GetYear() const
 {
-	uint8_t day;
-	Month month;
-	uint16_t year;
-	CivilFromDays(m_timestamp, day, month, year);
-	return year;
+	return std::get<2>(CivilFromDays(m_timestamp));
+}
+
+DateTuple CDate::GetDate() const
+{
+	return CivilFromDays(m_timestamp);
 }
 
 WeekDay CDate::GetWeekDay() const
@@ -225,7 +242,6 @@ std::istream& operator>>(std::istream& is, CDate& date)
 	if (!(is >> day >> dot1 >> month >> dot2 >> year) || dot1 != '.' || dot2 != '.')
 	{
 		is.setstate(std::ios::failbit);
-		throw std::invalid_argument("Invalid date format");
 	}
 	
 	try 
@@ -234,7 +250,6 @@ std::istream& operator>>(std::istream& is, CDate& date)
 	} catch (const std::exception&) 
 	{
 		is.setstate(std::ios::failbit);
-		throw;
 	}
 	
 	return is;

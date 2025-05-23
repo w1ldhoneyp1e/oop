@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <compare>
+#include <tuple>
 
 enum class Month
 {
@@ -17,22 +18,16 @@ enum class WeekDay
     THURSDAY, FRIDAY, SATURDAY
 };
 
+using DateTuple = std::tuple<uint8_t, Month, uint16_t>;
+
 class CDate
 {
 private:
     uint64_t m_timestamp;
 
-    static bool IsLeapYear(uint64_t year);
-    static uint64_t LastDayOfMonth(uint16_t year, Month month);
-    static bool IsValidDate(uint8_t day, Month month, uint16_t year);
-    static uint64_t DaysFromCivil(uint8_t day, Month month, uint16_t year);
-    static void CivilFromDays(uint64_t days, uint8_t& day, Month& month, uint16_t& year);
-
 public:
-    static const uint64_t MIN_TIMESTAMP = 0;
-    static const uint64_t MAX_TIMESTAMP = 2932896;
-
     CDate(uint8_t day, Month month, uint16_t year);
+    CDate(const DateTuple& date);
     explicit CDate(uint64_t timestamp);
     CDate();
 
@@ -40,6 +35,7 @@ public:
     Month GetMonth() const;
     uint16_t GetYear() const;
     WeekDay GetWeekDay() const;
+    DateTuple GetDate() const;
 
     CDate& operator++();
     CDate operator++(int);
