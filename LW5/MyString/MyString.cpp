@@ -327,3 +327,62 @@ std::istream& operator>>(std::istream& is, MyString& str)
 
     return is;
 }
+
+char* MyString::begin() 
+{ 
+    return m_data; 
+}
+
+char* MyString::end() 
+{ 
+    return m_data + m_length; 
+}
+const char* MyString::begin() const 
+{
+    return m_data; 
+}
+
+const char* MyString::end() const 
+{ 
+    return m_data + m_length; 
+}
+
+const char* MyString::cbegin() const 
+{ 
+    return m_data; 
+}
+
+const char* MyString::cend() const 
+{ 
+    return m_data + m_length; 
+}
+
+std::reverse_iterator<char*> MyString::rbegin() 
+{ 
+    return std::reverse_iterator<char*>(end()); 
+}
+
+std::reverse_iterator<char*> MyString::rend() 
+{ 
+    return std::reverse_iterator<char*>(begin()); 
+}
+
+std::reverse_iterator<const char*> MyString::rbegin() const 
+{ 
+    return std::reverse_iterator<const char*>(end()); 
+}
+
+std::reverse_iterator<const char*> MyString::rend() const 
+{ 
+    return std::reverse_iterator<const char*>(begin()); 
+}
+
+std::reverse_iterator<const char*> MyString::crbegin() const 
+{ 
+    return std::reverse_iterator<const char*>(cend()); 
+}
+
+std::reverse_iterator<const char*> MyString::crend() const 
+{ 
+    return std::reverse_iterator<const char*>(cbegin()); 
+}

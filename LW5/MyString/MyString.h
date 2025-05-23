@@ -41,6 +41,20 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const MyString& str);
     friend std::istream& operator>>(std::istream& is, MyString& str);
 
+    char* begin();
+    char* end();
+    const char* begin() const;
+    const char* end() const;
+    const char* cbegin() const;
+    const char* cend() const;
+
+    std::reverse_iterator<char*> rbegin();
+    std::reverse_iterator<char*> rend();
+    std::reverse_iterator<const char*> rbegin() const;
+    std::reverse_iterator<const char*> rend() const;
+    std::reverse_iterator<const char*> crbegin() const;
+    std::reverse_iterator<const char*> crend() const;
+
 private:
     char* m_data;
     size_t m_length;

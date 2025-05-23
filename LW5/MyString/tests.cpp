@@ -304,3 +304,94 @@ TEST_CASE("Capacity management")
         REQUIRE(s1.GetCapacity() == 0);
     }
 }
+
+TEST_CASE("STL iterators")
+{
+    SECTION("Forward iteration")
+    {
+        MyString s("abcde");
+        std::string result;
+        for (auto it = s.begin(); it != s.end(); ++it)
+        {
+            result += *it;
+        }
+        REQUIRE(result == "abcde");
+    }
+
+    SECTION("Forward const iteration")
+    {
+        const MyString s("abcde");
+        std::string result;
+        for (auto it = s.begin(); it != s.end(); ++it)
+        {
+            result += *it;
+        }
+        REQUIRE(result == "abcde");
+    }
+
+    SECTION("Range-based for")
+    {
+        MyString s("xyz");
+        std::string result;
+        for (char c : s)
+        {
+            result += c;
+        }
+        REQUIRE(result == "xyz");
+    }
+
+    SECTION("Reverse iteration")
+    {
+        MyString s("12345");
+        std::string result;
+        for (auto it = s.rbegin(); it != s.rend(); ++it)
+        {
+            result += *it;
+        }
+        REQUIRE(result == "54321");
+    }
+
+    SECTION("Reverse const iteration")
+    {
+        const MyString s("12345");
+        std::string result;
+        for (auto it = s.rbegin(); it != s.rend(); ++it)
+        {
+            result += *it;
+        }
+        REQUIRE(result == "54321");
+    }
+
+    SECTION("STL")
+    {
+        MyString s("hello");
+        auto it = std::find(s.begin(), s.end(), 'e');
+        REQUIRE(it != s.end());
+        REQUIRE(*it == 'e');
+
+        std::reverse(s.begin(), s.end());
+        REQUIRE(std::string(s.begin(), s.end()) == "olleh");
+    }
+
+    SECTION("Iterator arithmetic")
+    {
+        MyString s("abcdef");
+        auto it1 = s.begin();
+        auto it2 = s.begin() + 3;
+        REQUIRE(*it2 == 'd');
+        REQUIRE(it2 - it1 == 3);
+        it1 += 3;
+        REQUIRE(it1 == it2);
+    }
+
+    SECTION("Const iterator arithmetic")
+    {
+        const MyString s("abcdef");
+        auto it1 = s.begin();
+        auto it2 = s.begin() + 4;
+        REQUIRE(*it2 == 'e');
+        REQUIRE(it2 - it1 == 4);
+        it1 += 4;
+        REQUIRE(it1 == it2);
+    }
+}
