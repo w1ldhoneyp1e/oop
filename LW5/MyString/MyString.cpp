@@ -2,29 +2,7 @@
 
 char MyString::emptyString[1] = { '\0' };
 
-MyString::MyString()
-    : m_data(emptyString)
-    , m_length(0)
-    , m_capacity(0)
-{
-}
-
-MyString::MyString(const char* pString)
-    : m_data(emptyString)
-    , m_length(0)
-    , m_capacity(0)
-{
-    if (pString)
-    {
-        m_length = strlen(pString);
-        m_capacity = m_length + 1;
-        m_data = new char[m_capacity];
-        memcpy(m_data, pString, m_length);
-        m_data[m_length] = '\0';
-    }
-}
-
-MyString::MyString(const char* pString, size_t length)
+MyString::MyString(const char* pString, size_t length) // delegir constr
     : m_data(emptyString)
     , m_length(0)
     , m_capacity(0)
@@ -39,19 +17,24 @@ MyString::MyString(const char* pString, size_t length)
     }
 }
 
-MyString::MyString(const MyString& other)
-    : m_data(emptyString)
-    , m_length(0)
-    , m_capacity(0)
+MyString::MyString()
+    : MyString(nullptr, 0)
 {
-    if (other.m_length > 0)
-    {
-        m_length = other.m_length;
-        m_capacity = m_length + 1;
-        m_data = new char[m_capacity];
-        memcpy(m_data, other.m_data, m_length);
-        m_data[m_length] = '\0';
-    }
+}
+
+MyString::MyString(const char* pString)
+    : MyString(pString, pString ? strlen(pString) : 0)
+{
+}
+
+MyString::MyString(const MyString& other)
+    : MyString(other.m_data, other.m_length)
+{
+}
+
+MyString::MyString(const std::string& stlString)
+    : MyString(stlString.c_str(), stlString.length())
+{
 }
 
 MyString::MyString(MyString&& other) noexcept
@@ -64,27 +47,9 @@ MyString::MyString(MyString&& other) noexcept
     other.m_capacity = 0;
 }
 
-MyString::MyString(const std::string& stlString)
-    : m_data(emptyString)
-    , m_length(0)
-    , m_capacity(0)
+MyString::~MyString() // clear
 {
-    if (!stlString.empty())
-    {
-        m_length = stlString.length();
-        m_capacity = m_length + 1;
-        m_data = new char[m_capacity];
-        memcpy(m_data, stlString.c_str(), m_length);
-        m_data[m_length] = '\0';
-    }
-}
-
-MyString::~MyString()
-{
-    if (m_data != emptyString)
-    {
-        delete[] m_data;
-    }
+    Clear();
 }
 
 size_t MyString::GetLength() const
@@ -110,11 +75,8 @@ MyString MyString::SubString(size_t start, size_t length) const
 
 void MyString::Clear()
 {
-    if (m_data != emptyString)
-    {
-        delete[] m_data;
-        m_data = emptyString;
-    }
+    Empty();
+    m_data = emptyString;
     m_length = 0;
     m_capacity = 0;
 }
@@ -147,30 +109,37 @@ void MyString::Reallocate(size_t newCapacity)
     m_capacity = newCapacity;
 }
 
-MyString& MyString::operator=(const MyString& other)
+void MyString::Empty()
 {
-    if (this != &other)
+    if (m_data != emptyString)
     {
-        if (other.m_length == 0)
-        {
-            Clear();
-        }
-        else
-        {
-            if (m_capacity <= other.m_length)
-            {
-                if (m_data != emptyString)
-                {
-                    delete[] m_data;
-                }
-                m_capacity = other.m_length + 1;
-                m_data = new char[m_capacity];
-            }
-            m_length = other.m_length;
-            memcpy(m_data, other.m_data, m_length);
-            m_data[m_length] = '\0';
-        }
+        delete[] m_data;
     }
+}
+
+MyString& MyString::operator=(const MyString& other) // vlozhennost
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    if (other.m_length == 0)
+    {
+        Clear();
+        return *this;
+    }
+
+    if (m_capacity <= other.m_length)
+    {
+        Empty(); // vinesti
+        m_capacity = other.m_length + 1;
+        m_data = new char[m_capacity];
+    }
+    m_length = other.m_length;
+    memcpy(m_data, other.m_data, m_length);
+    m_data[m_length] = '\0';
+
     return *this;
 }
 
@@ -178,42 +147,20 @@ MyString& MyString::operator=(MyString&& other) noexcept
 {
     if (this != &other)
     {
-        if (m_data != emptyString)
-        {
-            delete[] m_data;
-        }
+        Clear(); // clear
 
-        m_data = other.m_data;
-        m_length = other.m_length;
-        m_capacity = other.m_capacity;
-
-        other.m_data = emptyString;
-        other.m_length = 0;
-        other.m_capacity = 0;
+        std::swap(m_data, other.m_data); // swap
+        std::swap(m_length, other.m_length);
+        std::swap(m_capacity, other.m_capacity);
     }
+    
     return *this;
 }
 
-MyString MyString::operator+(const MyString& other) const
+MyString MyString::operator+(const MyString& other) const // zaisp +=
 {
-    if (other.m_length == 0)
-    {
-        return *this;
-    }
-    if (m_length == 0)
-    {
-        return other;
-    }
-
-    MyString result;
-    result.m_length = m_length + other.m_length;
-    result.m_capacity = result.m_length + 1;
-    result.m_data = new char[result.m_capacity];
-
-    memcpy(result.m_data, m_data, m_length);
-    memcpy(result.m_data + m_length, other.m_data, other.m_length);
-    result.m_data[result.m_length] = '\0';
-
+    MyString result(*this);
+    result += other;
     return result;
 }
 
@@ -306,23 +253,28 @@ std::ostream& operator<<(std::ostream& os, const MyString& str)
     return os.write(str.GetStringData(), str.GetLength());
 }
 
-std::istream& operator>>(std::istream& is, MyString& str)
+std::istream& operator>>(std::istream& is, MyString& str) // portim str
 {
-    str.Clear();
+    MyString temp;
     char ch;
     while (is.get(ch) && !isspace(static_cast<unsigned char>(ch)))
     {
-        if (str.m_length == str.m_capacity)
+        if (temp.m_length == temp.m_capacity)
         {
-            size_t newCapacity = std::max(str.m_length + 1, str.m_capacity * 2);
-            str.Reallocate(newCapacity);
+            size_t newCapacity = std::max(temp.m_length + 1, temp.m_capacity * 2);
+            temp.Reallocate(newCapacity);
         }
-        str.m_data[str.m_length++] = ch;
+        temp.m_data[temp.m_length++] = ch;
     }
-    
-    if (str.m_capacity > 0 && str.m_length > 0)
+
+    if (temp.m_capacity > 0 && temp.m_length > 0)
     {
-        str.m_data[str.m_length] = '\0';
+        temp.m_data[temp.m_length] = '\0';
+    }
+
+    if (is)
+    {
+        str = std::move(temp);
     }
 
     return is;

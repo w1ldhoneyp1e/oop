@@ -62,4 +62,5 @@ private:
 
     static char emptyString[1];
     void Reallocate(size_t newCapacity);
+    void Empty();
 }; 
