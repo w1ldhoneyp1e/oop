@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Http.cpp" />
     <ClCompile Include="HttpUrl.cpp" />
+    <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HttpUrl.h" />

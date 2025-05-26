@@ -21,20 +21,20 @@ public:
         std::string const& domain,
         std::string const& document,
         Protocol protocol,
-        unsigned short port
+        unsigned port
     );
 
     std::string GetURL() const;
     std::string GetDomain() const;
     std::string GetDocument() const;
     Protocol GetProtocol() const;
-    unsigned short GetPort() const;
+    unsigned GetPort() const;
 
 private:
     std::string m_domain;
     std::string m_document;
     Protocol m_protocol;
-    unsigned short m_port;
+    unsigned m_port;
 
     static Protocol ParseProtocol(const std::string& str);
     static std::string ToLower(const std::string& str);

@@ -60,7 +60,7 @@ HttpUrl::HttpUrl(std::string const& url)
         int port = std::stoi(match[3].str());
         if (port < MIN_PORT || port > MAX_PORT)
             throw UrlParsingError("Port out of range");
-        m_port = static_cast<unsigned short>(port);
+        m_port = static_cast<unsigned>(port);
     }
     else
     {
@@ -77,18 +77,18 @@ HttpUrl::HttpUrl(std::string const& domain, std::string const& document, Protoco
 {
 }
 
-HttpUrl::HttpUrl(std::string const& domain, std::string const& document, Protocol protocol, unsigned short port)
+HttpUrl::HttpUrl(std::string const& domain, std::string const& document, Protocol protocol, unsigned port)
     : m_domain(domain)
     , m_protocol(protocol)
     , m_port(port)
 {
     if (domain.empty())
     {
-        throw std::invalid_argument("Domain cannot be empty");
+        throw UrlParsingError("Domain cannot be empty");
     }
     if (port < MIN_PORT || port > MAX_PORT)
     {
-        throw std::invalid_argument("Port out of range");
+        throw UrlParsingError("Port out of range");
     }
     m_document = document.empty() ? "/" : document;
     if (m_document[0] != '/')
@@ -125,7 +125,7 @@ Protocol HttpUrl::GetProtocol() const
     return m_protocol;
 }
 
-unsigned short HttpUrl::GetPort() const
+unsigned HttpUrl::GetPort() const
 {
     return m_port;
 }
