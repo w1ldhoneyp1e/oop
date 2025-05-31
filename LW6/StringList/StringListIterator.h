@@ -27,76 +27,19 @@ private:
 
 public:
     StringListIteratorT() = default;
-    explicit StringListIteratorT(NodePtr node, ListPtr list = nullptr) : m_node(node), m_list(list) {}
+    explicit StringListIteratorT(NodePtr node, ListPtr list = nullptr);
 
     template<bool B = IsConst, std::enable_if_t<B, int> = 0>
-    StringListIteratorT(const StringListIteratorT<false>& other) : m_node(other.m_node), m_list(other.m_list) {}
+    StringListIteratorT(const StringListIteratorT<false>& other);
 
-    reference operator*() const 
-    { 
-        if (!m_node) 
-        {
-            static value_type empty_value;
-            return empty_value;
-        }
-        return m_node->value; 
-    }
-    
-    pointer operator->() const 
-    { 
-        if (!m_node) 
-        {
-            static value_type empty_value;
-            return &empty_value;
-        }
-        return &m_node->value; 
-    }
-    
-    StringListIteratorT& operator++() 
-    { 
-        if (m_node) 
-        {
-            m_node = m_node->next;
-        }
-        return *this; 
-    }
-    
-    StringListIteratorT operator++(int) 
-    { 
-        StringListIteratorT tmp = *this; 
-        ++(*this); 
-        return tmp; 
-    }
-    
-    StringListIteratorT& operator--() 
-    { 
-        if (m_node) 
-        {
-            m_node = m_node->prev;
-        }
-        else if (m_list) 
-        {
-            m_node = static_cast<NodePtr>(m_list->GetTail());
-        }
-        return *this; 
-    }
-    
-    StringListIteratorT operator--(int) 
-    { 
-        StringListIteratorT tmp = *this; 
-        --(*this); 
-        return tmp; 
-    }
-    
-    bool operator==(const StringListIteratorT& other) const 
-    { 
-        return m_node == other.m_node; 
-    }
-    
-    bool operator!=(const StringListIteratorT& other) const 
-    { 
-        return m_node != other.m_node; 
-    }
+    reference operator*() const;
+    pointer operator->() const;
+    StringListIteratorT& operator++();
+    StringListIteratorT operator++(int);
+    StringListIteratorT& operator--();
+    StringListIteratorT operator--(int);
+    bool operator==(const StringListIteratorT& other) const;
+    bool operator!=(const StringListIteratorT& other) const;
 
     template<bool> friend class StringListIteratorT;
     friend class StringList;
