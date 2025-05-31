@@ -3,9 +3,7 @@
 #include <iterator>
 #include <cstddef>
 #include <type_traits>
-#include "Node.h"
-
-class StringList;
+#include "StringList.h"
 
 template<bool IsConst>
 class StringListIteratorT
@@ -17,7 +15,7 @@ public:
     using pointer = std::conditional_t<IsConst, const value_type*, value_type*>;
     using reference = std::conditional_t<IsConst, const value_type&, value_type&>;
 
-    using NodeType = Node;
+    using NodeType = typename StringList::Node;
     using NodePtr = std::conditional_t<IsConst, const NodeType*, NodeType*>;
     using ListPtr = std::conditional_t<IsConst, const StringList*, StringList*>;
 

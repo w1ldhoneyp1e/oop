@@ -3,7 +3,6 @@
 #include <iterator>
 #include <memory>
 #include <cstddef>
-#include "Node.h"
 
 template<bool IsConst>
 class StringListIteratorT;
@@ -13,7 +12,21 @@ using StringListConstIterator = StringListIteratorT<true>;
 
 class StringList
 {
+private:
+	struct Node {
+		std::string value;
+		Node* prev = nullptr;
+		Node* next = nullptr;
+		
+		Node() = default;
+		Node(const std::string& val) : value(val) {}
+		Node(std::string&& val) : value(std::move(val)) {}
+	};
+
 public:
+	template<bool IsConst>
+	friend class StringListIteratorT;
+
 	using ValueType = std::string;
 
 private:
@@ -67,7 +80,4 @@ public:
 	Iterator Insert(Iterator pos, const std::string& value);
 	Iterator Insert(Iterator pos, std::string&& value);
 	Iterator Erase(Iterator pos) noexcept;
-	
-	template<bool IsConst>
-	friend class StringListIteratorT;
 };

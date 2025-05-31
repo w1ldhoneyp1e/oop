@@ -35,7 +35,7 @@ void StringList::PushBack(const std::string& value)
 
 void StringList::PushBack(std::string&& value)
 {
-    Node* node = new Node(std::move(value));
+    StringList::Node* node = new StringList::Node(std::move(value));
     node->prev = m_tail;
     if (m_tail)
     {
@@ -56,7 +56,7 @@ void StringList::PushFront(const std::string& value)
 
 void StringList::PushFront(std::string&& value)
 {
-    Node* node = new Node(std::move(value));
+    StringList::Node* node = new StringList::Node(std::move(value));
     node->next = m_head;
     if (m_head)
     {
@@ -88,7 +88,7 @@ size_t StringList::GetSize() const noexcept
 void StringList::CopyFrom(const StringList& other)
 {
     ClearNodes();
-    for (Node* node = other.m_head; node; node = node->next)
+    for (StringList::Node* node = other.m_head; node; node = node->next)
     {
         PushBack(node->value);
     }
@@ -103,10 +103,10 @@ void StringList::Swap(StringList& other) noexcept
 
 void StringList::ClearNodes() noexcept
 {
-    Node* node = m_head;
+    StringList::Node* node = m_head;
     while (node)
     {
-        Node* next = node->next;
+        StringList::Node* next = node->next;
         delete node;
         node = next;
     }
@@ -115,12 +115,12 @@ void StringList::ClearNodes() noexcept
     m_size = 0;
 }
 
-Node* StringList::GetHead() const noexcept
+StringList::Node* StringList::GetHead() const noexcept
 { 
     return m_head; 
 }
 
-Node* StringList::GetTail() const noexcept
+StringList::Node* StringList::GetTail() const noexcept
 { 
     return m_tail; 
 }
@@ -192,8 +192,8 @@ StringList::Iterator StringList::Insert(Iterator pos, const std::string& value)
 
 StringList::Iterator StringList::Insert(Iterator pos, std::string&& value)
 {
-    Node* posNode = pos.m_node;
-    Node* newNode = new Node(std::move(value));
+    StringList::Node* posNode = pos.m_node;
+    StringList::Node* newNode = new StringList::Node(std::move(value));
     newNode->next = posNode;
     if (posNode)
     {
@@ -227,12 +227,12 @@ StringList::Iterator StringList::Insert(Iterator pos, std::string&& value)
 
 StringList::Iterator StringList::Erase(Iterator pos) noexcept
 {
-    Node* node = pos.m_node;
+    StringList::Node* node = pos.m_node;
     if (!node)
     {
         return end();
     }
-    Node* next = node->next;
+    StringList::Node* next = node->next;
     if (node->prev)
     {
         node->prev->next = node->next;
