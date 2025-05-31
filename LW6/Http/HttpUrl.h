@@ -35,8 +35,5 @@ private:
     std::string m_document;
     Protocol m_protocol;
     unsigned m_port;
-
-    static Protocol ParseProtocol(const std::string& str);
-    static std::string ToLower(const std::string& str);
 };
 

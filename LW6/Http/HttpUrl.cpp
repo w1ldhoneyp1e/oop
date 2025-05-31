@@ -17,30 +17,30 @@ namespace
             ? HTTP_DEFAULT_PORT 
             : HTTPS_DEFAULT_PORT;
     }
-}
 
-std::string HttpUrl::ToLower(const std::string& str)
-{
-    std::string result = str;
-    std::transform(result.begin(), result.end(), result.begin(),
-        [](unsigned char c) { 
-            return std::tolower(c); 
-        });
-    return result;
-}
+    std::string ToLower(const std::string& str)
+    {
+        std::string result = str;
+        std::transform(result.begin(), result.end(), result.begin(),
+            [](unsigned char c) {
+                return std::tolower(c);
+            });
+        return result;
+    }
 
-Protocol HttpUrl::ParseProtocol(const std::string& str)
-{
-    std::string proto = ToLower(str);
-    if (proto == "http")
+    Protocol ParseProtocol(const std::string& str)
     {
-        return Protocol::HTTP;
+        std::string proto = ToLower(str);
+        if (proto == "http")
+        {
+            return Protocol::HTTP;
+        }
+        if (proto == "https")
+        {
+            return Protocol::HTTPS;
+        }
+        throw UrlParsingError("Invalid protocol: " + str);
     }
-    if (proto == "https")
-    {
-        return Protocol::HTTPS;
-    }
-    throw UrlParsingError("Invalid protocol: " + str);
 }
 
 HttpUrl::HttpUrl(std::string const& url)
@@ -59,7 +59,9 @@ HttpUrl::HttpUrl(std::string const& url)
     {
         int port = std::stoi(match[3].str());
         if (port < MIN_PORT || port > MAX_PORT)
+        {
             throw UrlParsingError("Port out of range");
+        }
         m_port = static_cast<unsigned>(port);
     }
     else
@@ -69,7 +71,9 @@ HttpUrl::HttpUrl(std::string const& url)
 
     m_document = match[4].matched ? match[4].str() : "/";
     if (m_document.empty() || m_document[0] != '/')
+    {
         m_document = "/" + m_document;
+    }
 }
 
 HttpUrl::HttpUrl(std::string const& domain, std::string const& document, Protocol protocol)

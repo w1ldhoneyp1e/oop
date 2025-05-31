@@ -16,9 +16,9 @@ int main()
             std::cout << "  Port:     " << url.GetPort() << std::endl;
             std::cout << "  Document: " << url.GetDocument() << std::endl;
         }
-        catch (const UrlParsingError& ex)
+        catch (const UrlParsingError& e)
         {
-            std::cout << "Error: " << ex.what() << std::endl;
+            std::cout << "Error: " << e.what() << std::endl;
         }
     }
     return 0;
