@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_all.hpp>
-#include "PrimeNumberSetGenerator.hpp"
+#include "PrimeNumberSetGenerator.h"
 
 TEST_CASE("GeneratePrimeNumbersSet handles invalid input", "[primes]")
 {
@@ -11,27 +11,35 @@ TEST_CASE("GeneratePrimeNumbersSet handles invalid input", "[primes]")
 
 TEST_CASE("GeneratePrimeNumbersSet generates correct sets", "[primes]")
 {
-    SECTION("Small numbers")
+    SECTION("10")
     {
         auto primes = GeneratePrimeNumbersSet(10);
         std::set<int> expected = {2, 3, 5, 7};
         REQUIRE(primes == expected);
     }
 
-    SECTION("Larger set")
-    {
-        auto primes = GeneratePrimeNumbersSet(20);
-        std::set<int> expected = {2, 3, 5, 7, 11, 13, 17, 19};
-        REQUIRE(primes == expected);
-    }
-
-    SECTION("Count of primes up to 100")
+    SECTION("100")
     {
         auto primes = GeneratePrimeNumbersSet(100);
         REQUIRE(primes.size() == 25);
     }
 
-    SECTION("Count of primes up to 100000000")
+    SECTION("Boundary cases")
+    {
+        auto primes1 = GeneratePrimeNumbersSet(1);
+        std::set<int> expected1 = {};
+        REQUIRE(primes1 == expected1);
+
+        auto primes2 = GeneratePrimeNumbersSet(2);
+        std::set<int> expected2 = {2};
+        REQUIRE(primes2 == expected2);
+
+        auto primes3 = GeneratePrimeNumbersSet(3);
+        std::set<int> expected3 = {2, 3};
+        REQUIRE(primes3 == expected3);
+    }
+
+    SECTION("100000000")
     {
         auto primes = GeneratePrimeNumbersSet(100000000);
         REQUIRE(primes.size() == 5761455);
