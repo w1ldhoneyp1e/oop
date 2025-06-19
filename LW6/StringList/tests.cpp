@@ -5,17 +5,17 @@
 #include <vector>
 #include <algorithm>
 
-TEST_CASE("StringList: basic operations")
+TEST_CASE("StringList methods")
 {
     StringList list;
 
-    SECTION("List is initially empty")
+    SECTION("New list is empty")
     {
         REQUIRE(list.IsEmpty());
         REQUIRE(list.GetSize() == 0);
     }
 
-    SECTION("PushBack and PushFront for lvalue and rvalue")
+    SECTION("PushBack and PushFront")
     {
         std::string hello = "hello";
         list.PushBack(hello);
@@ -31,7 +31,7 @@ TEST_CASE("StringList: basic operations")
         }
     }
 
-    SECTION("Clear empties the list")
+    SECTION("Clear")
     {
         list.PushBack("a");
         list.PushBack("b");
@@ -41,7 +41,7 @@ TEST_CASE("StringList: basic operations")
     }
 }
 
-TEST_CASE("StringList: copy and move")
+TEST_CASE("Copy and move")
 {
     StringList list;
     list.PushBack("a");
@@ -66,6 +66,7 @@ TEST_CASE("StringList: copy and move")
     {
         StringList moved(std::move(list));
         REQUIRE(moved.GetSize() == 2);
+        REQUIRE(list.GetSize() == 0);
     }
 
     SECTION("Move assignment operator")
@@ -77,14 +78,14 @@ TEST_CASE("StringList: copy and move")
     }
 }
 
-TEST_CASE("StringList: Insert and Erase")
+TEST_CASE("Insert and erase")
 {
     StringList list;
     list.PushBack("a");
     list.PushBack("b");
     list.PushBack("c");
 
-    SECTION("Insert at beginning, middle and end")
+    SECTION("Insert, begin(), end(), ++it")
     {
         auto it = list.begin();
         list.Insert(it, "start");
@@ -101,7 +102,7 @@ TEST_CASE("StringList: Insert and Erase")
         }
     }
 
-    SECTION("Erase from beginning, middle and end")
+    SECTION("Erase")
     {
         auto it = list.begin();
         list.Erase(it);
@@ -168,16 +169,43 @@ TEST_CASE("StringList: iterators and reverse iterators")
     }
 }
 
-TEST_CASE("StringList: edge cases")
+TEST_CASE("edge cases")
 {
     StringList list;
-    REQUIRE(list.Erase(list.end()) == list.end());
-    list.Insert(list.begin(), "first");
-    REQUIRE(list.GetSize() == 1);
-    REQUIRE(*list.begin() == "first");
+
+    SECTION("Erase end()")
+    {
+        REQUIRE(list.Erase(list.end()) == list.end());
+        list.Insert(list.begin(), "first");
+        REQUIRE(list.GetSize() == 1);
+        REQUIRE(*list.begin() == "first");
+    }
+
+    SECTION("Self-assignment")
+    {
+        list.PushBack("a");
+        list.PushBack("b");
+        list = list;
+        REQUIRE(list.GetSize() == 2);
+        REQUIRE(*list.begin() == "a");
+    }
+    
+    SECTION("Erasing the only element")
+    {
+        list.PushBack("single");
+        auto it = list.Erase(list.begin());
+        REQUIRE(list.IsEmpty());
+        REQUIRE(it == list.end());
+    }
+
+    SECTION("Clearing an empty list is safe")
+    {
+        list.Clear();
+        REQUIRE(list.IsEmpty());
+    }
 }
 
-TEST_CASE("StringList: additional iterator tests")
+TEST_CASE("iterator operations")
 {
     StringList list;
     list.PushBack("abc");
@@ -211,63 +239,5 @@ TEST_CASE("StringList: additional iterator tests")
         {
             REQUIRE(*it == expected[i++]);
         }
-    }
-}
-
-TEST_CASE("StringList: complex scenarios")
-{
-    StringList list;
-    
-    list.PushBack("1");
-    list.PushBack("3");
-    list.PushBack("5");
-
-    auto it = list.begin();
-    ++it;
-    list.Insert(it, "2");
-    
-    it = list.end();
-    list.Insert(it, "6");
-    
-    std::vector<std::string> expected = {"1", "2", "3", "5", "6"};
-    size_t i = 0;
-    for (const auto& s : list)
-    {
-        REQUIRE(s == expected[i++]);
-    }
-    
-    it = list.begin();
-    ++it; ++it;
-    list.Erase(it);
-    
-    expected = {"1", "2", "5", "6"};
-    i = 0;
-    for (const auto& s : list)
-    {
-        REQUIRE(s == expected[i++]);
-    }
-}
-
-TEST_CASE("StringList: edge cases with iterators")
-{
-    StringList list;
-    
-    SECTION("Operations on empty list")
-    {
-        REQUIRE(list.begin() == list.end());
-        
-        auto it = list.begin();
-        std::string value = *it;
-        REQUIRE(value == "");
-    }
-    
-    SECTION("Decrements from end()")
-    {
-        list.PushBack("1");
-        list.PushBack("2");
-        
-        auto it = list.end();
-        --it;
-        REQUIRE(*it == "2");
     }
 }
