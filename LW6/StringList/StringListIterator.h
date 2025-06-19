@@ -1,31 +1,34 @@
 #pragma once
-#include <string>
 #include <iterator>
 #include <cstddef>
 #include <type_traits>
-#include "StringList.h"
+#include "Node.h"
+
+class StringList;
 
 template<bool IsConst>
 class StringListIteratorT
 {
+    friend class StringList;
+
 public:
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = std::string;
     using difference_type = std::ptrdiff_t;
     using pointer = std::conditional_t<IsConst, const value_type*, value_type*>;
     using reference = std::conditional_t<IsConst, const value_type&, value_type&>;
-
-    using NodeType = typename StringList::Node;
-    using NodePtr = std::conditional_t<IsConst, const NodeType*, NodeType*>;
+    using NodePtr = std::conditional_t<IsConst, const Node*, Node*>;
     using ListPtr = std::conditional_t<IsConst, const StringList*, StringList*>;
 
 private:
-    NodePtr m_node = nullptr;
-    ListPtr m_list = nullptr;
+    NodePtr m_node;
+    ListPtr m_list;
+
+    template<bool> friend class StringListIteratorT;
 
 public:
-    StringListIteratorT() = default;
-    explicit StringListIteratorT(NodePtr node, ListPtr list = nullptr);
+    StringListIteratorT() : m_node(nullptr), m_list(nullptr) {}
+    explicit StringListIteratorT(NodePtr node, ListPtr list);
 
     template<bool B = IsConst, std::enable_if_t<B, int> = 0>
     StringListIteratorT(const StringListIteratorT<false>& other);
@@ -38,9 +41,6 @@ public:
     StringListIteratorT operator--(int);
     bool operator==(const StringListIteratorT& other) const;
     bool operator!=(const StringListIteratorT& other) const;
-
-    template<bool> friend class StringListIteratorT;
-    friend class StringList;
 };
 
 using StringListIterator = StringListIteratorT<false>;
